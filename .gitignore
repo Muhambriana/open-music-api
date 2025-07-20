@@ -2,3 +2,5 @@ node_modules
 notes-api-webserver.pem
 .env
 .prod.env
+.vscode/*
+!.vscode/launch.json
