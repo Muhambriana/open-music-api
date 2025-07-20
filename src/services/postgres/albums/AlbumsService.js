@@ -8,18 +8,18 @@ class AlbumsService {
   }
 
   async addAlbum({ name, year }) {
-    const albumId = nanoid;
+    const albumId = nanoid();
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO albums (album_id, name, year, created_at, updated_at), VALUES($1, $2, $3, $4, $5) RETURNING album_id',
+      text: 'INSERT INTO albums (album_id, name, year, created_at, updated_at) VALUES($1, $2, $3, $4, $5) RETURNING album_id',
       values: [albumId, name, year, createdAt, updatedAt],
     };
 
     const result = await this._pool.query(query);
 
-    const resultAlbumId = result.rows[0].id;
+    const resultAlbumId = result.rows[0].album_id;
 
     if (!resultAlbumId) {
       throw new InvariantError('Album failed to create');
