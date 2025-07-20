@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import Hapi from '@hapi/hapi';
-import AlbumsService from './services/postgres/albums/AlbumsService.js';
+import AlbumsService from './services/postgres/albums/AlbumsService';
 import AlbumsValidator from './validator/albums';
 import ClientError from './exceptions/ClientError';
 import albumsPlugin from './api/albums';
