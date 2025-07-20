@@ -1,12 +1,9 @@
 import Joi from 'joi';
+import { yearSchema, stringRequired } from '../DataValidator.js';
 
 const AlbumPayloadSchema = Joi.object({
-  name: Joi.string().required(),
-  year: Joi.number()
-    .integer()
-    .min(1900) //  Assuming albums cannot be older than 1900
-    .max(new Date().getFullYear()) //  Assuming albums cannot be from the future
-    .required(),
+  name: stringRequired,
+  year: yearSchema,
 });
 
 export default AlbumPayloadSchema;
