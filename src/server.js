@@ -1,14 +1,18 @@
 import Hapi from '@hapi/hapi';
 import dotenv from 'dotenv';
+import ClientError from './exceptions/ClientError.js';
 import AlbumsService from './services/postgres/albums/AlbumsService.js';
 import AlbumsValidator from './validator/albums/index.js';
-import ClientError from './exceptions/ClientError.js';
 import albumsPlugin from './api/albums/index.js';
+import SongsService from './services/postgres/songs/SongsValidator.js';
+import SongsValidator from './validator/songs/index.js';
+import songsPlugin from './api/songs/index.js';
 
 dotenv.config();
 
 const init = async () => {
   const albumsService = new AlbumsService();
+  const songsService = new SongsService();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -20,13 +24,22 @@ const init = async () => {
     },
   });
 
-  await server.register({
-    plugin: albumsPlugin,
-    options: {
-      service: albumsService,
-      validator: AlbumsValidator,
+  await server.register([
+    {
+      plugin: albumsPlugin,
+      options: {
+        service: albumsService,
+        validator: AlbumsValidator,
+      },
     },
-  });
+    {
+      plugin: songsPlugin,
+      options: {
+        service: songsService,
+        validator: SongsValidator,
+      },
+    },
+  ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
