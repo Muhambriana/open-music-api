@@ -4,7 +4,7 @@ import ClientError from './exceptions/ClientError.js';
 import AlbumsService from './services/postgres/albums/AlbumsService.js';
 import AlbumsValidator from './validator/albums/index.js';
 import albumsPlugin from './api/albums/index.js';
-import SongsService from './services/postgres/songs/SongsValidator.js';
+import SongsService from './services/postgres/songs/SongsService.js';
 import SongsValidator from './validator/songs/index.js';
 import songsPlugin from './api/songs/index.js';
 
