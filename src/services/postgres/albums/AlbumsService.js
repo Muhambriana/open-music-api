@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import { Pool } from 'pg';
 import InvariantError from '../../../exceptions/InvariantError.js';
+import { mapAlbumDBToModel } from '../../../utils/index.js';
+import NotFoundError from '../../../exceptions/NotFoundError.js';
 
 class AlbumsService {
   constructor() {
@@ -26,6 +28,22 @@ class AlbumsService {
     }
 
     return resultAlbumId;
+  }
+
+  async getAlbumById(albumId) {
+    const query = {
+      text: 'SELECT * FROM albums WHERE album_id = $1',
+      values: [albumId],
+    };
+
+    const result = await this._pool.query(query);
+    const albums = result.rows;
+
+    if (!albums.length) {
+      throw new NotFoundError('Album not found');
+    }
+
+    return albums.map(mapAlbumDBToModel)[0];
   }
 }
 

@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import { Pool } from 'pg';
 import InvariantError from '../../../exceptions/InvariantError.js';
+import { mapSongDBToModel } from '../../../utils/index.js';
 
 class SongsService {
   constructor() {
@@ -33,6 +34,11 @@ class SongsService {
     }
 
     return resultSongId;
+  }
+
+  async getSongs() {
+    const result = await this._pool.query('SELECT * FROM songs');
+    return result.rows.map(mapSongDBToModel);
   }
 }
 
