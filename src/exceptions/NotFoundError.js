@@ -1,4 +1,5 @@
-import ClientError from './ClientError';
+// eslint-disable-next-line import/extensions
+import ClientError from './ClientError.js';
 
 class NotFoundError extends ClientError {
   constructor(message) {

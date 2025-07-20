@@ -1,5 +1,5 @@
-import AlbumsHandler from './handler';
-import routes from './routes';
+import AlbumsHandler from './handler.js';
+import routes from './routes.js';
 
 const albumsPlugin = {
   name: 'albums',

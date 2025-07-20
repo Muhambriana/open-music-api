@@ -1,9 +1,9 @@
-import dotenv from 'dotenv';
 import Hapi from '@hapi/hapi';
-import AlbumsService from './services/postgres/albums/AlbumsService';
-import AlbumsValidator from './validator/albums';
-import ClientError from './exceptions/ClientError';
-import albumsPlugin from './api/albums';
+import dotenv from 'dotenv';
+import AlbumsService from './services/postgres/albums/AlbumsService.js';
+import AlbumsValidator from './validator/albums/index.js';
+import ClientError from './exceptions/ClientError.js';
+import albumsPlugin from './api/albums/index.js';
 
 dotenv.config();
 
@@ -11,7 +11,7 @@ const init = async () => {
   const albumsService = new AlbumsService();
 
   const server = Hapi.server({
-    port: process.env.POST,
+    port: process.env.PORT,
     host: process.env.HOST,
     routes: {
       cors: {
@@ -21,7 +21,7 @@ const init = async () => {
   });
 
   await server.register({
-    plugins: albumsPlugin,
+    plugin: albumsPlugin,
     options: {
       service: albumsService,
       validator: AlbumsValidator,
