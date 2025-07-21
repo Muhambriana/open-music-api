@@ -50,6 +50,43 @@ class SongHandler {
       },
     };
   }
+
+  async getSongByIdHandler(request) {
+    const { songId } = request.params;
+
+    const song = await this._service.getSongById(songId);
+
+    return {
+      status: 'success',
+      data: {
+        song,
+      },
+    };
+  }
+
+  async putSongByIdHandler(request) {
+    this._validator.validateSongPayload(request.payload);
+
+    const { songId } = request.params;
+
+    await this._service.editSongById(songId, request.payload);
+
+    return {
+      status: 'success',
+      message: 'Song updated successfuly',
+    };
+  }
+
+  async deleteSongByIdHandler(request) {
+    const { songId } = request.params;
+
+    await this._service.deleteSongById(songId);
+
+    return {
+      status: 'success',
+      message: 'Song deleted successfully',
+    };
+  }
 }
 
 export default SongHandler;
