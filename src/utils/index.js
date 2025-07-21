@@ -25,4 +25,16 @@ const mapSongDBToModel = ({
   duration,
 });
 
-export { mapAlbumDBToModel, mapSongDBToModel };
+const mapAlbumWithSongDBToModel = ({
+  album_id,
+  name,
+  year,
+  songs = [],
+}) => ({
+  id: album_id,
+  name,
+  year,
+  songs: songs.map(mapSongDBToModel),
+});
+
+export { mapAlbumDBToModel, mapSongDBToModel, mapAlbumWithSongDBToModel };
