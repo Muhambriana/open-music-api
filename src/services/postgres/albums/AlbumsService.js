@@ -45,6 +45,34 @@ class AlbumsService {
 
     return albums.map(mapAlbumDBToModel)[0];
   }
+
+  async editAlbumById(albumId, { name, year }) {
+    const updateAt = new Date().toISOString();
+
+    const query = {
+      text: 'UPDATE albums SET name = $1, year = $2, updated_at = $3 WHERE album_id = $4 RETURNING album_id',
+      values: [name, year, updateAt, albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Album not found');
+    }
+  }
+
+  async deleteAlbumById(albumId) {
+    const query = {
+      text: 'DELETE FROM albums WHERE album_id = $1 RETURNING album_id',
+      values: [albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Album not found');
+    }
+  }
 }
 
 export default AlbumsService;

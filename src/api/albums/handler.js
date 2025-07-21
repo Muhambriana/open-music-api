@@ -36,6 +36,30 @@ class AlbumHandler {
       },
     };
   }
+
+  async putAlbumByIdHandler(request) {
+    this._validator.validateAlbumPayload(request.payload);
+
+    const { albumId } = request.params;
+
+    await this._service.editAlbumById(albumId, request.payload);
+
+    return {
+      status: 'success',
+      message: 'Album updated successfully',
+    };
+  }
+
+  async deleteAlbumByIdHandler(request) {
+    const { albumId } = request.params;
+
+    await this._service.deleteAlbumById(albumId);
+
+    return {
+      status: 'success',
+      message: 'Album deleted successfully',
+    };
+  }
 }
 
 export default AlbumHandler;
