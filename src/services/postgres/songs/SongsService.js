@@ -3,6 +3,7 @@ import { Pool } from 'pg';
 import InvariantError from '../../../exceptions/InvariantError.js';
 import { mapSongDBToModel } from '../../../utils/index.js';
 import NotFoundError from '../../../exceptions/NotFoundError.js';
+import getDateTimeNow from '../../../utils/helper.js';
 
 class SongsService {
   constructor() {
@@ -18,7 +19,7 @@ class SongsService {
     albumId,
   }) {
     const songId = nanoid();
-    const createdAt = new Date().toISOString();
+    const createdAt = getDateTimeNow();
     const updatedAt = createdAt;
 
     const query = {
@@ -94,7 +95,7 @@ class SongsService {
     duration,
     albumId,
   }) {
-    const updatedAt = new Date().toISOString();
+    const updatedAt = getDateTimeNow();
 
     const query = {
       text: 'UPDATE songs SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6, updated_at = $7 WHERE song_id = $8 RETURNING song_id',
