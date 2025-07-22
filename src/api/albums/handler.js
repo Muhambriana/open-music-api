@@ -1,4 +1,5 @@
 import autoBind from 'auto-bind';
+import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
 
 class AlbumHandler {
   constructor(service, validator) {
@@ -16,13 +17,13 @@ class AlbumHandler {
     const albumId = await this._service.addAlbum({ name, year });
 
     const response = h.response({
-      status: 'success',
-      message: 'Album created successfully',
+      status: ResponseTypeEnum.SUCCESS.defaultMessage,
+      message: ResponseTypeEnum.ALBUM_SUCCESSFULLY_CREATED.defaultMessage,
       data: {
         albumId,
       },
     });
-    response.code(201);
+    response.code(ResponseTypeEnum.ALBUM_SUCCESSFULLY_CREATED.code);
     return response;
   }
 
@@ -45,8 +46,8 @@ class AlbumHandler {
     await this._service.editAlbumById(albumId, request.payload);
 
     return {
-      status: 'success',
-      message: 'Album updated successfully',
+      status: ResponseTypeEnum.SUCCESS.defaultMessage,
+      message: ResponseTypeEnum.ALBUM_UPDATED_SUCCESSFULLY.defaultMessage,
     };
   }
 
@@ -56,8 +57,8 @@ class AlbumHandler {
     await this._service.deleteAlbumById(albumId);
 
     return {
-      status: 'success',
-      message: 'Album deleted successfully',
+      status: ResponseTypeEnum.SUCCESS.defaultMessage,
+      message: ResponseTypeEnum.ALBUM_DELETED_SUCCESSFULLY.defaultMessage,
     };
   }
 }

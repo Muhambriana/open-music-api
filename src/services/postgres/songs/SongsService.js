@@ -4,6 +4,7 @@ import InvariantError from '../../../exceptions/InvariantError.js';
 import { mapSongDBToModel } from '../../../utils/index.js';
 import NotFoundError from '../../../exceptions/NotFoundError.js';
 import getDateTimeNow from '../../../utils/helper.js';
+import ResponseTypeEnum from '../../../config/ResponseTypeEnum.js';
 
 class SongsService {
   constructor() {
@@ -32,7 +33,7 @@ class SongsService {
     const resultSongId = result.rows[0].song_id;
 
     if (!resultSongId) {
-      throw new InvariantError('Song failed to create');
+      throw new InvariantError(ResponseTypeEnum.SONG_FAILED_TO_CREATE.defaultMessage);
     }
 
     return resultSongId;
@@ -73,7 +74,7 @@ class SongsService {
     const songs = result.rows;
 
     if (!songs.length) {
-      throw new NotFoundError('Song not found');
+      throw new NotFoundError(ResponseTypeEnum.SONG_NOT_EXIST.defaultMessage);
     }
 
     return songs.map(mapSongDBToModel)[0];
@@ -106,7 +107,7 @@ class SongsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Song not found');
+      throw new NotFoundError(ResponseTypeEnum.SONG_NOT_EXIST.defaultMessage);
     }
   }
 
@@ -119,7 +120,7 @@ class SongsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Song not found');
+      throw new NotFoundError(ResponseTypeEnum.SONG_NOT_EXIST.defaultMessage);
     }
   }
 }

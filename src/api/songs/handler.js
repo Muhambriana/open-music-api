@@ -1,4 +1,5 @@
 import autoBind from 'auto-bind';
+import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
 
 class SongHandler {
   constructor(service, validator) {
@@ -30,14 +31,14 @@ class SongHandler {
     });
 
     const response = h.response({
-      status: 'success',
-      message: 'Song created successfully',
+      status: ResponseTypeEnum.SUCCESS.defaultMessage,
+      message: ResponseTypeEnum.SONG_SUCCESSFULLY_CREATED.defaultMessage,
       data: {
         songId,
       },
     });
 
-    response.code(201);
+    response.code(ResponseTypeEnum.SONG_SUCCESSFULLY_CREATED.code);
     return response;
   }
 
@@ -49,7 +50,7 @@ class SongHandler {
     const songs = await this._service.getSongs(title, performer);
 
     return {
-      status: 'success',
+      status: ResponseTypeEnum.SUCCESS.defaultMessage,
       data: {
         songs,
       },
@@ -62,7 +63,7 @@ class SongHandler {
     const song = await this._service.getSongById(songId);
 
     return {
-      status: 'success',
+      status: ResponseTypeEnum.SUCCESS.defaultMessage,
       data: {
         song,
       },
@@ -77,8 +78,8 @@ class SongHandler {
     await this._service.editSongById(songId, request.payload);
 
     return {
-      status: 'success',
-      message: 'Song updated successfuly',
+      status: ResponseTypeEnum.SUCCESS.defaultMessage,
+      message: ResponseTypeEnum.SONG_UPDATED_SUCCESSFULLY.defaultMessage,
     };
   }
 
@@ -88,8 +89,8 @@ class SongHandler {
     await this._service.deleteSongById(songId);
 
     return {
-      status: 'success',
-      message: 'Song deleted successfully',
+      status: ResponseTypeEnum.SUCCESS.defaultMessage,
+      message: ResponseTypeEnum.SONG_DELETED_SUCCESSFULLY.defaultMessage,
     };
   }
 }

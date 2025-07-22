@@ -3,6 +3,7 @@ import { Pool } from 'pg';
 import InvariantError from '../../../exceptions/InvariantError.js';
 import { mapAlbumWithSongDBToModel } from '../../../utils/index.js';
 import NotFoundError from '../../../exceptions/NotFoundError.js';
+import ResponseTypeEnum from '../../../config/ResponseTypeEnum.js';
 
 class AlbumsService {
   constructor() {
@@ -24,7 +25,7 @@ class AlbumsService {
     const resultAlbumId = result.rows[0].album_id;
 
     if (!resultAlbumId) {
-      throw new InvariantError('Album failed to create');
+      throw new InvariantError(ResponseTypeEnum.ALBUM_FAILED_TO_CREATE.defaultMessage);
     }
 
     return resultAlbumId;
@@ -48,7 +49,7 @@ class AlbumsService {
     const songs = resultSongs.rows;
 
     if (!albums.length) {
-      throw new NotFoundError('Album not found');
+      throw new NotFoundError(ResponseTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
 
     return mapAlbumWithSongDBToModel({
@@ -68,7 +69,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Album not found');
+      throw new NotFoundError(ResponseTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
   }
 
@@ -81,7 +82,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Album not found');
+      throw new NotFoundError(ResponseTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
   }
 }
