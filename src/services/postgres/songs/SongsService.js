@@ -59,14 +59,6 @@ class SongsService {
       values,
     };
 
-    const finalQuery = query.text.replace(/\$\d+/g, (match) => {
-      // eslint-disable-next-line radix
-      const index = parseInt(match.slice(1)) - 1;
-      const value = values[index];
-      return typeof value === 'string' ? `'${value}'` : value;
-    });
-    console.log('Executing query:', finalQuery);
-
     const result = await this._pool.query(query);
     return result.rows;
   }
