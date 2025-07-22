@@ -34,7 +34,7 @@ const mapAlbumWithSongDBToModel = ({
   id: album_id,
   name,
   year,
-  songs: songs.map(mapSongDBToModel),
+  songs,
 });
 
 export { mapAlbumDBToModel, mapSongDBToModel, mapAlbumWithSongDBToModel };
