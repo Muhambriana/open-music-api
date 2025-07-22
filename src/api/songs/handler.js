@@ -46,17 +46,7 @@ class SongHandler {
 
     await this._validator.validateSongQuery({ title, performer });
 
-    if (title !== '' || performer !== '') {
-      const songs = await this._service.getSongsByFilter(title, performer);
-      return {
-        status: 'success',
-        data: {
-          songs,
-        },
-      };
-    }
-
-    const songs = await this._service.getSongs();
+    const songs = await this._service.getSongs(title, performer);
 
     return {
       status: 'success',

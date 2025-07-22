@@ -37,12 +37,7 @@ class SongsService {
     return resultSongId;
   }
 
-  async getSongs() {
-    const result = await this._pool.query('SELECT song_id as id, title, performer FROM songs');
-    return result.rows;
-  }
-
-  async getSongsByFilter(title, performer) {
+  async getSongs(title, performer) {
     const values = [];
     const conditions = [];
 
@@ -56,12 +51,20 @@ class SongsService {
       conditions.push(`performer ILIKE $${values.length}`);
     }
 
-    const whereClause = `WHERE ${conditions.join(' AND ')}`;
+    const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
     const query = {
       text: `SELECT song_id as id, title, performer FROM songs ${whereClause}`,
       values,
     };
+
+    const finalQuery = query.text.replace(/\$\d+/g, (match) => {
+      // eslint-disable-next-line radix
+      const index = parseInt(match.slice(1)) - 1;
+      const value = values[index];
+      return typeof value === 'string' ? `'${value}'` : value;
+    });
+    console.log('Executing query:', finalQuery);
 
     const result = await this._pool.query(query);
     return result.rows;
