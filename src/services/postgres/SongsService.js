@@ -9,6 +9,7 @@ import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
 class SongsService {
   constructor() {
     this._pool = new Pool();
+    this._albumsService = null;
   }
 
   setAlbumsService(albumsService) {
