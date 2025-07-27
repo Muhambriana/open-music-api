@@ -7,8 +7,11 @@ import getDateTimeNow from '../../utils/helper.js';
 import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
 
 class SongsService {
-  constructor(albumsService) {
+  constructor() {
     this._pool = new Pool();
+  }
+
+  setAlbumsService(albumsService) {
     this._albumsService = albumsService;
   }
 
