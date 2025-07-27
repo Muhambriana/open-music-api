@@ -1,5 +1,5 @@
 import autoBind from 'auto-bind';
-import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
+import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 
 class AlbumHandler {
   constructor(service, validator) {
@@ -17,13 +17,13 @@ class AlbumHandler {
     const albumId = await this._service.addAlbum({ name, year });
 
     const response = h.response({
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
-      message: ResponseTypeEnum.ALBUM_SUCCESSFULLY_CREATED.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_CREATED.message('Album'),
       data: {
         albumId,
       },
     });
-    response.code(ResponseTypeEnum.ALBUM_SUCCESSFULLY_CREATED.code);
+    response.code(SuccessTypeEnum.SUCCESSFULLY_CREATED.code);
     return response;
   }
 
@@ -31,7 +31,7 @@ class AlbumHandler {
     const { albumId } = request.params;
     const album = await this._service.getAlbumAndSongsByAlbumId(albumId);
     return {
-      status: 'success',
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
         album,
       },
@@ -46,8 +46,8 @@ class AlbumHandler {
     await this._service.editAlbumById(albumId, request.payload);
 
     return {
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
-      message: ResponseTypeEnum.ALBUM_UPDATED_SUCCESSFULLY.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_UPDATED.message('Album'),
     };
   }
 
@@ -57,8 +57,8 @@ class AlbumHandler {
     await this._service.deleteAlbumById(albumId);
 
     return {
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
-      message: ResponseTypeEnum.ALBUM_DELETED_SUCCESSFULLY.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Album'),
     };
   }
 }

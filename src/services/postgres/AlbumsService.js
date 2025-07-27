@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import InvariantError from '../../exceptions/InvariantError.js';
 import { mapAlbumWithSongDBToModel } from '../../utils/index.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
-import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
+import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 
 class AlbumsService {
   constructor() {
@@ -29,7 +29,7 @@ class AlbumsService {
     const resultAlbumId = result.rows[0].public_id;
 
     if (!resultAlbumId) {
-      throw new InvariantError(ResponseTypeEnum.ALBUM_FAILED_TO_CREATE.defaultMessage);
+      throw new InvariantError(ExceptionTypeEnum.ALBUM_FAILED_TO_CREATE.defaultMessage);
     }
 
     return resultAlbumId;
@@ -44,7 +44,7 @@ class AlbumsService {
     const result = await this._pool.query(queryAlbums);
 
     if (!result.rowCount) {
-      throw new NotFoundError(ResponseTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
+      throw new NotFoundError(ExceptionTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
 
     return result.rows[0];
@@ -71,7 +71,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError(ResponseTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
+      throw new NotFoundError(ExceptionTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
   }
 
@@ -84,7 +84,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError(ResponseTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
+      throw new NotFoundError(ExceptionTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
   }
 }

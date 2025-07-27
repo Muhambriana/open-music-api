@@ -2,7 +2,7 @@ import { Pool } from 'pg';
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 import InvariantError from '../../exceptions/InvariantError.js';
-import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
+import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 
 class UsersService {
   constructor() {
@@ -23,7 +23,7 @@ class UsersService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError(ResponseTypeEnum.USER_FAILED_TO_CREATE.defaultMessage);
+      throw new InvariantError(ExceptionTypeEnum.USER_FAILED_TO_CREATE.defaultMessage);
     }
 
     return result.rows[0].public_id;
@@ -38,7 +38,7 @@ class UsersService {
     const result = await this._pool.query(query);
 
     if (result.rowCount > 0) {
-      throw new InvariantError(ResponseTypeEnum.USER_ALREADY_EXIST.defaultMessage);
+      throw new InvariantError(ExceptionTypeEnum.USER_ALREADY_EXIST.defaultMessage);
     }
   }
 }

@@ -1,5 +1,5 @@
 import autoBind from 'auto-bind';
-import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
+import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 
 class SongHandler {
   constructor(service, validator) {
@@ -31,14 +31,14 @@ class SongHandler {
     });
 
     const response = h.response({
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
-      message: ResponseTypeEnum.SONG_SUCCESSFULLY_CREATED.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_CREATED.message('Song'),
       data: {
         songId,
       },
     });
 
-    response.code(ResponseTypeEnum.SONG_SUCCESSFULLY_CREATED.code);
+    response.code(SuccessTypeEnum.SUCCESSFULLY_CREATED.code);
     return response;
   }
 
@@ -50,7 +50,7 @@ class SongHandler {
     const songs = await this._service.getSongs(title, performer);
 
     return {
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
         songs,
       },
@@ -63,7 +63,7 @@ class SongHandler {
     const song = await this._service.getSongById(songId);
 
     return {
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
         song,
       },
@@ -78,8 +78,8 @@ class SongHandler {
     await this._service.editSongById(songId, request.payload);
 
     return {
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
-      message: ResponseTypeEnum.SONG_UPDATED_SUCCESSFULLY.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_UPDATED.message('Song'),
     };
   }
 
@@ -89,8 +89,8 @@ class SongHandler {
     await this._service.deleteSongById(songId);
 
     return {
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
-      message: ResponseTypeEnum.SONG_DELETED_SUCCESSFULLY.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Song'),
     };
   }
 }

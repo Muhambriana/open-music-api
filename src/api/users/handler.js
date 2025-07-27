@@ -1,5 +1,5 @@
 import autoBind from 'auto-bind';
-import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
+import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 
 class UserHandler {
   constructor(service, validator) {
@@ -16,14 +16,14 @@ class UserHandler {
     const userId = await this._service.addUser({ username, password, fullname });
 
     const response = h.response({
-      status: ResponseTypeEnum.SUCCESS.defaultMessage,
-      message: ResponseTypeEnum.USER_SUCCESSFULLY_CREATED.defaultMessage,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_CREATED.message('User'),
       data: {
         userId,
       },
     });
 
-    response.code(ResponseTypeEnum.USER_SUCCESSFULLY_CREATED.code);
+    response.code(SuccessTypeEnum.SUCCESSFULLY_CREATED.code);
     return response;
   }
 }
