@@ -18,13 +18,13 @@ class SongsService {
     genre,
     performer,
     duration,
-    albumId,
+    albumId: albumPublicId,
   }) {
-    let albumRecId = null;
+    let albumId = null;
 
-    if (albumId) {
-      const album = await this._albumsService.getAlbumById(albumId);
-      albumRecId = album.rec_id;
+    if (albumPublicId) {
+      const album = await this._albumsService.getAlbumById(albumPublicId);
+      albumId = album.rec_id;
     }
 
     const songId = nanoid();
@@ -33,7 +33,7 @@ class SongsService {
 
     const query = {
       text: 'INSERT INTO songs (public_id, title, year, genre, performer, duration, album_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING public_id',
-      values: [songId, title, year, genre, performer, duration, albumRecId, createdAt, updatedAt],
+      values: [songId, title, year, genre, performer, duration, albumId, createdAt, updatedAt],
     };
 
     const result = await this._pool.query(query);
@@ -94,13 +94,13 @@ class SongsService {
     genre,
     performer,
     duration,
-    albumId,
+    albumId: albumPublicId,
   }) {
-    let albumRecId = null;
+    let albumId = null;
 
-    if (albumId) {
-      const album = await this._albumsService.getAlbumById(albumId);
-      albumRecId = album.rec_id;
+    if (albumPublicId) {
+      const album = await this._albumsService.getAlbumById(albumPublicId);
+      albumId = album.rec_id;
     }
 
     const updatedAt = getDateTimeNow();
@@ -113,7 +113,7 @@ class SongsService {
         genre,
         performer,
         duration,
-        albumRecId,
+        albumId,
         updatedAt,
         songId,
       ],
