@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid';
 import { Pool } from 'pg';
-import InvariantError from '../../../exceptions/InvariantError.js';
-import { mapSongDBToModel } from '../../../utils/index.js';
-import NotFoundError from '../../../exceptions/NotFoundError.js';
-import getDateTimeNow from '../../../utils/helper.js';
-import ResponseTypeEnum from '../../../config/ResponseTypeEnum.js';
+import InvariantError from '../../exceptions/InvariantError.js';
+import { mapSongDBToModel } from '../../utils/index.js';
+import NotFoundError from '../../exceptions/NotFoundError.js';
+import getDateTimeNow from '../../utils/helper.js';
+import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
 
 class SongsService {
   constructor(albumsService) {

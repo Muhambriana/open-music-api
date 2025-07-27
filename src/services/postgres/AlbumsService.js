@@ -1,9 +1,9 @@
 import { nanoid } from 'nanoid';
 import { Pool } from 'pg';
-import InvariantError from '../../../exceptions/InvariantError.js';
-import { mapAlbumWithSongDBToModel } from '../../../utils/index.js';
-import NotFoundError from '../../../exceptions/NotFoundError.js';
-import ResponseTypeEnum from '../../../config/ResponseTypeEnum.js';
+import InvariantError from '../../exceptions/InvariantError.js';
+import { mapAlbumWithSongDBToModel } from '../../utils/index.js';
+import NotFoundError from '../../exceptions/NotFoundError.js';
+import ResponseTypeEnum from '../../config/ResponseTypeEnum.js';
 
 class AlbumsService {
   constructor() {
