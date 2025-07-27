@@ -22,8 +22,9 @@ class SongsService {
   }) {
     let albumRecId = null;
 
-    if (albumId !== null) {
-      albumRecId = await this._albumsService.getAlbumById(albumId).rec_id;
+    if (albumId) {
+      const album = await this._albumsService.getAlbumById(albumId);
+      albumRecId = album.rec_id;
     }
 
     const songId = nanoid();
@@ -97,8 +98,9 @@ class SongsService {
   }) {
     let albumRecId = null;
 
-    if (albumId !== null) {
-      albumRecId = await this._albumsService.getAlbumById(albumId).rec_id;
+    if (albumId) {
+      const album = await this._albumsService.getAlbumById(albumId);
+      albumRecId = album.rec_id;
     }
 
     const updatedAt = getDateTimeNow();
