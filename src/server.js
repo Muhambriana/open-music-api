@@ -7,12 +7,16 @@ import albumsPlugin from './api/albums/index.js';
 import SongsService from './services/postgres/SongsService.js';
 import SongsValidator from './validator/songs/index.js';
 import songsPlugin from './api/songs/index.js';
+import UsersService from './services/postgres/UsersService.js';
+import UserValidator from './validator/users/index.js';
+import usersPlugin from './api/users/index.js';
 
 dotenv.config();
 
 const init = async () => {
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
+  const usersService = new UsersService();
 
   albumsService.setSongsService(songsService);
   songsService.setAlbumsService(albumsService);
@@ -40,6 +44,13 @@ const init = async () => {
       options: {
         service: songsService,
         validator: SongsValidator,
+      },
+    },
+    {
+      plugin: usersPlugin,
+      options: {
+        service: usersService,
+        validator: UserValidator,
       },
     },
   ]);

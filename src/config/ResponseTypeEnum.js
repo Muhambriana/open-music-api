@@ -15,9 +15,15 @@ class ResponseTypeEnum {
 
   static ALBUM_FAILED_TO_CREATE = new ResponseTypeEnum(604, 'album_failed_to_create', 'Album failed to create');
 
+  static USER_ALREADY_EXIST = new ResponseTypeEnum(605, 'user_already_exist', 'User already exist');
+
+  static USER_FAILED_TO_CREATE = new ResponseTypeEnum(606, 'user_failed_to_create', 'User failed to create');
+
   static SONG_SUCCESSFULLY_CREATED = new ResponseTypeEnum(201, 'song_successfully_created', 'Song created successfully');
 
   static ALBUM_SUCCESSFULLY_CREATED = new ResponseTypeEnum(201, 'album_successfully_created', 'Album created successfully');
+
+  static USER_SUCCESSFULLY_CREATED = new ResponseTypeEnum(201, 'user_successfully_created', 'User created successfully');
 
   static SONG_UPDATED_SUCCESSFULLY = new ResponseTypeEnum(200, 'song_updated_successfully', 'Song updated successfully');
 
