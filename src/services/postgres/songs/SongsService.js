@@ -18,13 +18,12 @@ class SongsService {
     genre,
     performer,
     duration,
-    albumId: albumPublicId,
+    albumId,
   }) {
-    let albumId = null;
+    let album = null;
 
-    if (albumPublicId) {
-      const album = await this._albumsService.getAlbumById(albumPublicId);
-      albumId = album.rec_id;
+    if (albumId) {
+      album = await this._albumsService.getAlbumById(albumId);
     }
 
     const songId = nanoid();
@@ -33,7 +32,17 @@ class SongsService {
 
     const query = {
       text: 'INSERT INTO songs (public_id, title, year, genre, performer, duration, album_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING public_id',
-      values: [songId, title, year, genre, performer, duration, albumId, createdAt, updatedAt],
+      values: [
+        songId,
+        title,
+        year,
+        genre,
+        performer,
+        duration,
+        album ? album.rec_id : null,
+        createdAt,
+        updatedAt,
+      ],
     };
 
     const result = await this._pool.query(query);
@@ -94,13 +103,12 @@ class SongsService {
     genre,
     performer,
     duration,
-    albumId: albumPublicId,
+    albumId,
   }) {
-    let albumId = null;
+    let album = null;
 
-    if (albumPublicId) {
-      const album = await this._albumsService.getAlbumById(albumPublicId);
-      albumId = album.rec_id;
+    if (albumId) {
+      album = await this._albumsService.getAlbumById(albumId);
     }
 
     const updatedAt = getDateTimeNow();
@@ -113,7 +121,7 @@ class SongsService {
         genre,
         performer,
         duration,
-        albumId,
+        album ? album.rec_id : null,
         updatedAt,
         songId,
       ],
