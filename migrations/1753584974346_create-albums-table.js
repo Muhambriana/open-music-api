@@ -9,7 +9,7 @@ export const up = (pgm) => {
       type: 'serial',
       primaryKey: true,
     },
-    album_id: {
+    public_id: {
       type: 'VARCHAR(50)',
       notNull: true,
       unique: true,
@@ -21,6 +21,16 @@ export const up = (pgm) => {
     year: {
       type: 'integer',
       notNull: true,
+    },
+    created_at: {
+      type: 'timestamptz',
+      notNull: true,
+      default: pgm.func('current_timestamp'),
+    },
+    updated_at: {
+      type: 'timestamptz',
+      notNull: true,
+      default: pgm.func('current_timestamp'),
     },
   });
 };

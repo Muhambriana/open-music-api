@@ -1,23 +1,23 @@
 /* eslint-disable camelcase */
 const mapAlbumDBToModel = ({
-  album_id,
+  public_id,
   name,
   year,
 }) => ({
-  id: album_id,
+  id: public_id,
   name,
   year,
 });
 
 const mapSongDBToModel = ({
-  song_id,
+  public_id,
   title,
   year,
   performer,
   genre,
   duration,
 }) => ({
-  id: song_id,
+  id: public_id,
   title,
   year,
   performer,
@@ -26,12 +26,12 @@ const mapSongDBToModel = ({
 });
 
 const mapAlbumWithSongDBToModel = ({
-  album_id,
+  public_id,
   name,
   year,
   songs = [],
 }) => ({
-  id: album_id,
+  id: public_id,
   name,
   year,
   songs,

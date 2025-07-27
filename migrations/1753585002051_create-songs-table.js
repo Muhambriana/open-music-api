@@ -9,7 +9,7 @@ export const up = (pgm) => {
       type: 'serial',
       primaryKey: true,
     },
-    song_id: {
+    public_id: {
       type: 'VARCHAR(50)',
       notNull: true,
       unique: true,
@@ -34,8 +34,8 @@ export const up = (pgm) => {
       type: 'integer',
     },
     album_id: {
-      type: 'VARCHAR(50)',
-      references: 'albums(album_id)',
+      type: 'integer',
+      references: 'albums(rec_id)',
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE',
     },

@@ -10,19 +10,23 @@ class AlbumsService {
     this._pool = new Pool();
   }
 
+  setSongsService(songsService) {
+    this._songsService = songsService;
+  }
+
   async addAlbum({ name, year }) {
     const albumId = nanoid();
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO albums (album_id, name, year, created_at, updated_at) VALUES($1, $2, $3, $4, $5) RETURNING album_id',
+      text: 'INSERT INTO albums (public_id, name, year, created_at, updated_at) VALUES($1, $2, $3, $4, $5) RETURNING public_id',
       values: [albumId, name, year, createdAt, updatedAt],
     };
 
     const result = await this._pool.query(query);
 
-    const resultAlbumId = result.rows[0].album_id;
+    const resultAlbumId = result.rows[0].public_id;
 
     if (!resultAlbumId) {
       throw new InvariantError(ResponseTypeEnum.ALBUM_FAILED_TO_CREATE.defaultMessage);
@@ -33,27 +37,25 @@ class AlbumsService {
 
   async getAlbumById(albumId) {
     const queryAlbums = {
-      text: 'SELECT * FROM albums WHERE album_id = $1',
+      text: 'SELECT * FROM albums WHERE public_id = $1',
       values: [albumId],
     };
 
-    const querySongs = {
-      text: 'SELECT song_id as id, title, performer FROM songs WHERE album_id = $1',
-      values: [albumId],
-    };
+    const result = await this._pool.query(queryAlbums);
 
-    const resultAlbums = await this._pool.query(queryAlbums);
-    const resultSongs = await this._pool.query(querySongs);
-
-    const albums = resultAlbums.rows;
-    const songs = resultSongs.rows;
-
-    if (!albums.length) {
+    if (!result.rowCount) {
       throw new NotFoundError(ResponseTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
 
+    return result.rows[0];
+  }
+
+  async getAlbumAndSongsByAlbumId(albumId) {
+    const album = await this.getAlbumById(albumId);
+    const songs = await this._songsService.getSongsByAlbumId(album.rec_id);
+
     return mapAlbumWithSongDBToModel({
-      ...albums[0],
+      ...album,
       songs,
     });
   }
@@ -62,7 +64,7 @@ class AlbumsService {
     const updateAt = new Date().toISOString();
 
     const query = {
-      text: 'UPDATE albums SET name = $1, year = $2, updated_at = $3 WHERE album_id = $4 RETURNING album_id',
+      text: 'UPDATE albums SET name = $1, year = $2, updated_at = $3 WHERE public_id = $4 RETURNING public_id',
       values: [name, year, updateAt, albumId],
     };
 
@@ -75,7 +77,7 @@ class AlbumsService {
 
   async deleteAlbumById(albumId) {
     const query = {
-      text: 'DELETE FROM albums WHERE album_id = $1 RETURNING album_id',
+      text: 'DELETE FROM albums WHERE public_id = $1 RETURNING public_id',
       values: [albumId],
     };
 

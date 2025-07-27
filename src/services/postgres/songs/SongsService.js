@@ -7,8 +7,9 @@ import getDateTimeNow from '../../../utils/helper.js';
 import ResponseTypeEnum from '../../../config/ResponseTypeEnum.js';
 
 class SongsService {
-  constructor() {
+  constructor(albumsService) {
     this._pool = new Pool();
+    this._albumsService = albumsService;
   }
 
   async addSong({
@@ -19,18 +20,24 @@ class SongsService {
     duration,
     albumId,
   }) {
+    let albumRecId = null;
+
+    if (albumId !== null) {
+      albumRecId = await this._albumsService.getAlbumById(albumId).rec_id;
+    }
+
     const songId = nanoid();
     const createdAt = getDateTimeNow();
     const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO songs (song_id, title, year, genre, performer, duration, album_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING song_id',
-      values: [songId, title, year, genre, performer, duration, albumId, createdAt, updatedAt],
+      text: 'INSERT INTO songs (public_id, title, year, genre, performer, duration, album_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING public_id',
+      values: [songId, title, year, genre, performer, duration, albumRecId, createdAt, updatedAt],
     };
 
     const result = await this._pool.query(query);
 
-    const resultSongId = result.rows[0].song_id;
+    const resultSongId = result.rows[0].public_id;
 
     if (!resultSongId) {
       throw new InvariantError(ResponseTypeEnum.SONG_FAILED_TO_CREATE.defaultMessage);
@@ -56,7 +63,7 @@ class SongsService {
     const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
     const query = {
-      text: `SELECT song_id as id, title, performer FROM songs ${whereClause}`,
+      text: `SELECT public_id as id, title, performer FROM songs ${whereClause}`,
       values,
     };
 
@@ -66,7 +73,7 @@ class SongsService {
 
   async getSongById(songId) {
     const query = {
-      text: 'SELECT * FROM songs WHERE song_id = $1',
+      text: 'SELECT * FROM songs WHERE public_id = $1',
       values: [songId],
     };
 
@@ -88,17 +95,23 @@ class SongsService {
     duration,
     albumId,
   }) {
+    let albumRecId = null;
+
+    if (albumId !== null) {
+      albumRecId = await this._albumsService.getAlbumById(albumId).rec_id;
+    }
+
     const updatedAt = getDateTimeNow();
 
     const query = {
-      text: 'UPDATE songs SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6, updated_at = $7 WHERE song_id = $8 RETURNING song_id',
+      text: 'UPDATE songs SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6, updated_at = $7 WHERE public_id = $8 RETURNING public_id',
       values: [
         title,
         year,
         genre,
         performer,
         duration,
-        albumId,
+        albumRecId,
         updatedAt,
         songId,
       ],
@@ -113,7 +126,7 @@ class SongsService {
 
   async deleteSongById(songId) {
     const query = {
-      text: 'DELETE FROM songs WHERE song_id = $1 RETURNING song_id',
+      text: 'DELETE FROM songs WHERE public_id = $1 RETURNING public_id',
       values: [songId],
     };
 
@@ -122,6 +135,17 @@ class SongsService {
     if (!result.rows.length) {
       throw new NotFoundError(ResponseTypeEnum.SONG_NOT_EXIST.defaultMessage);
     }
+  }
+
+  async getSongsByAlbumId(albumId) {
+    const query = {
+      text: 'SELECT public_id as id, title, performer FROM songs WHERE album_id = $1',
+      values: [albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
   }
 }
 
