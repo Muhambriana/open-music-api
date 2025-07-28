@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 import InvariantError from '../../exceptions/InvariantError.js';
+import AuthenticationError from '../../exceptions/AuthenticationError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 
 class UsersService {
@@ -40,6 +41,29 @@ class UsersService {
     if (result.rowCount > 0) {
       throw new InvariantError(ExceptionTypeEnum.USER_ALREADY_EXIST.defaultMessage);
     }
+  }
+
+  async verifyUserCredential(username, password) {
+    const query = {
+      text: 'SELECT public_id, password FROM users WHERE username = $1',
+      values: [username],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new AuthenticationError(ExceptionTypeEnum.INVALID_CREDENTIAL.defaultMessage);
+    }
+
+    const { id, password: hashedPassword } = result.rows[0];
+
+    const match = await bcrypt.compare(password, hashedPassword);
+
+    if (!match) {
+      throw new AuthenticationError(ExceptionTypeEnum.INVALID_CREDENTIAL.defaultMessage);
+    }
+
+    return id;
   }
 }
 

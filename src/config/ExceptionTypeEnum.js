@@ -5,7 +5,7 @@ class ExceptionTypeEnum {
     this.defaultMessage = defaultMessage;
   }
 
-  static SUCCESS = new ExceptionTypeEnum(200, 'ok', 'success');
+  static INVALID_CREDENTIAL = new ExceptionTypeEnum(601, 'invalid_credential', 'Invalid credential');
 
   static SONG_NOT_EXIST = new ExceptionTypeEnum(601, 'song_not_exist', 'Song not exist');
 
