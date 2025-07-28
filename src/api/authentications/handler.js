@@ -34,6 +34,39 @@ class AuthenticationsHandler {
     response.code(SuccessTypeEnum.SUCCESSFULLY_CREATED.code);
     return response;
   }
+
+  async putAuthenticationHandler(request) {
+    this._validator.validatePutAuthenticationPayload(request.payload);
+
+    const { refreshToken } = request.payload;
+
+    await this._authenticationsService.verifyRefreshToken(refreshToken);
+
+    const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
+    const accessToken = this._tokenManager.generateAccessToken({ id });
+
+    return {
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_UPDATED.message('Access Token'),
+      data: {
+        accessToken,
+      },
+    };
+  }
+
+  async deleteAuthenticationHandler(request) {
+    this._validator.validateDeleteAuthenticationPayload(request.payload);
+
+    const { refreshToken } = request.payload;
+
+    await this._authenticationsService.verifyRefreshToken(refreshToken);
+    await this._authenticationsService.deleteRefreshToken(refreshToken);
+
+    return {
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Access Token'),
+    };
+  }
 }
 
 export default AuthenticationsHandler;
