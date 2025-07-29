@@ -31,7 +31,7 @@ class AuthenticationsService {
 
   async deleteRefreshToken(token) {
     const query = {
-      text: 'DELETE FROM authencations WHERE token = $1',
+      text: 'DELETE FROM authentications WHERE token = $1',
       values: [token],
     };
 
