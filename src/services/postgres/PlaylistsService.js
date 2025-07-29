@@ -27,6 +27,21 @@ class PlaylistsService {
 
     return resultPlaylistId;
   }
+
+  async getPlaylistsByUserId(userId) {
+    const query = {
+      text: `SELECT p.public_id as id, p.name, u.username
+      FROM playlists p
+      JOIN users u ON u.rec_id = p.owner
+      WHERE owner = $1
+      `,
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
 }
 
 export default PlaylistsService;
