@@ -1,4 +1,5 @@
 import Hapi from '@hapi/hapi';
+import Jwt from '@hapi/jwt';
 import dotenv from 'dotenv';
 import ClientError from './exceptions/ClientError.js';
 
@@ -23,6 +24,11 @@ import AuthenticationsValidator from './validator/authentications/index.js';
 import authenticationsPlugin from './api/authentications/index.js';
 import TokenManager from './api/tokenize/TokenManager.js';
 
+// Playlist
+import PlaylistsService from './services/postgres/PlaylistsService.js';
+import PlaylistsValidator from './validator/playlists/index.js';
+import playlistsPlugin from './api/playlists/index.js';
+
 dotenv.config();
 
 const init = async () => {
@@ -30,6 +36,7 @@ const init = async () => {
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const playlistsService = new PlaylistsService();
 
   albumsService.setSongsService(songsService);
   songsService.setAlbumsService(albumsService);
@@ -42,6 +49,28 @@ const init = async () => {
         origin: ['*'],
       },
     },
+  });
+
+  await server.register([
+    {
+      plugin: Jwt,
+    },
+  ]);
+
+  server.auth.strategy('openmusicapp_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
   });
 
   await server.register([
@@ -73,6 +102,14 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      },
+    },
+    {
+      plugin: playlistsPlugin,
+      options: {
+        playlistsService,
+        usersService,
+        validator: PlaylistsValidator,
       },
     },
   ]);

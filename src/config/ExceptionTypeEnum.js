@@ -20,6 +20,10 @@ class ExceptionTypeEnum {
   static USER_ALREADY_EXIST = new ExceptionTypeEnum(605, 'user_already_exist', 'User already exist');
 
   static USER_FAILED_TO_CREATE = new ExceptionTypeEnum(606, 'user_failed_to_create', 'User failed to create');
+
+  static PLAYLIST_FAILED_TO_CREATE = new ExceptionTypeEnum(607, 'playlist_failed_to_create', 'Playlist failed to create');
+
+  static USER_NOT_EXIST = new ExceptionTypeEnum(605, 'user_not_exist', 'User not exist');
 }
 
 Object.freeze(ExceptionTypeEnum); // Prevent further modification

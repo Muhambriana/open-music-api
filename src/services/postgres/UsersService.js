@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import InvariantError from '../../exceptions/InvariantError.js';
 import AuthenticationError from '../../exceptions/AuthenticationError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
+import NotFoundError from '../../exceptions/NotFoundError.js';
 
 class UsersService {
   constructor() {
@@ -45,7 +46,7 @@ class UsersService {
 
   async verifyUserCredential(username, password) {
     const query = {
-      text: 'SELECT public_id, password FROM users WHERE username = $1',
+      text: 'SELECT public_id as id, password FROM users WHERE username = $1',
       values: [username],
     };
 
@@ -64,6 +65,21 @@ class UsersService {
     }
 
     return id;
+  }
+
+  async getUserById(id) {
+    const query = {
+      text: 'SELECT * from users WHERE public_id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(ExceptionTypeEnum.USER_NOT_EXIST);
+    }
+
+    return result.rows[0];
   }
 }
 
