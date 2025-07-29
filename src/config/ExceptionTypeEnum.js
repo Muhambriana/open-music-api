@@ -28,6 +28,8 @@ class ExceptionTypeEnum {
   static USER_NOT_EXIST = new ExceptionTypeEnum(605, 'user_not_exist', 'User not exist');
 
   static PLAYLIST_NOT_EXIST = new ExceptionTypeEnum(605, 'playlist_not_exist', 'Playlist not exist');
+
+  static FAILED_ADD_SONG_INTO_PLAYLIST = new ExceptionTypeEnum(606, 'failed_add_song_into_playlist', 'Failed add song into playlist');
 }
 
 Object.freeze(ExceptionTypeEnum); // Prevent further modification

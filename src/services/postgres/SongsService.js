@@ -161,6 +161,21 @@ class SongsService {
 
     return result.rows;
   }
+
+  async getSongRecordId(songId) {
+    const query = {
+      text: 'SELECT rec_id as recId FROM WHERE public_id = $1',
+      values: [songId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(ExceptionTypeEnum.SONG_NOT_EXIST.defaultMessage);
+    }
+
+    return result.rows[0].recId;
+  }
 }
 
 export default SongsService;

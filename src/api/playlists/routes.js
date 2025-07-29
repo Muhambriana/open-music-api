@@ -23,6 +23,14 @@ const routes = (handler) => [
       auth: 'openmusicapp_jwt',
     },
   },
+  {
+    method: 'POST',
+    path: '/playlists/{playlistId}/songs',
+    handler: handler.postSongIntoPlaylistHandler,
+    options: {
+      auth: 'openmusicapp_jwt',
+    },
+  },
 ];
 
 export default routes;

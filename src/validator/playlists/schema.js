@@ -1,8 +1,12 @@
 import Joi from 'joi';
 import { stringRequired } from '../DataValidator.js';
 
-const PlaylistPayloadSchema = Joi.object({
+const PostPlaylistPayloadSchema = Joi.object({
   name: stringRequired,
 });
 
-export default PlaylistPayloadSchema;
+const PostSongIntoPlaylistSchema = Joi.object({
+  songId: stringRequired,
+});
+
+export { PostPlaylistPayloadSchema, PostSongIntoPlaylistSchema };

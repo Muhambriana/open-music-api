@@ -2,7 +2,7 @@ import autoBind from 'auto-bind';
 import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 
 class PlaylistsHandler {
-  constructor(playlistsService, usersService, validator) {
+  constructor(playlistsService, songsService, usersService, validator) {
     this._playlistsService = playlistsService;
     this._usersService = usersService;
     this._validator = validator;
@@ -11,7 +11,7 @@ class PlaylistsHandler {
   }
 
   async postPlaylistHandler(request, h) {
-    this._validator.validatePlaylistPayload(request.payload);
+    this._validator.validatePostPlaylistPayload(request.payload);
 
     const { name } = request.payload;
     const { id: credentialId } = request.auth.credentials;
@@ -57,6 +57,25 @@ class PlaylistsHandler {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Playlist'),
     };
+  }
+
+  async postSongIntoPlaylistHandler(request, h) {
+    this._validator.validatePostSongIntoPlaylistPayload(request.payload);
+    const { playlistId } = request.params;
+    const { songId } = request.payload;
+
+    const existPlaylistId = await this._playlistsService.getPlaylistRecordId(playlistId);
+    const existSongId = await this._songsService.getSongRecordId(songId);
+
+    await this._playlistsService.postSongIntoPlaylist(existPlaylistId, existSongId);
+
+    const response = h.response({
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_CREATED.message('Song into playlist'),
+    });
+
+    response.code(SuccessTypeEnum.SUCCESSFULLY_CREATED.code);
+    return response;
   }
 }
 

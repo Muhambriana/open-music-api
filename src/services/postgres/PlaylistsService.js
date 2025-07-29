@@ -75,6 +75,36 @@ class PlaylistsService {
       throw new AuthorizationError(ExceptionTypeEnum.NOT_AUTHORIZED.defaultMessage);
     }
   }
+
+  async addSongIntoPlaylist(playlistId, songId) {
+    const query = {
+      text: 'INSERT INTO playlist_songs (playlist_id, song_id) VALUES ($1, $2) RETURNING rec_id',
+      values: [playlistId, songId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError(ExceptionTypeEnum.FAILED_ADD_SONG_INTO_PLAYLIST.defaultMessage);
+    }
+
+    return result.rows.rec_id;
+  }
+
+  async getPlaylistRecordId(playlistId) {
+    const query = {
+      text: 'SELECT rec_id as recId FROM playlists WHERE public_id = $1',
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
+    }
+
+    return result.rows[0].recId;
+  }
 }
 
 export default PlaylistsService;

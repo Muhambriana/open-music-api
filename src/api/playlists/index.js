@@ -6,10 +6,16 @@ const playlistPlugin = {
   version: '1.0.0',
   register: async (server, {
     playlistsService,
+    songsService,
     usersService,
     validator,
   }) => {
-    const playlisyHandler = new PlaylistsHandler(playlistsService, usersService, validator);
+    const playlisyHandler = new PlaylistsHandler(
+      playlistsService,
+      songsService,
+      usersService,
+      validator,
+    );
     server.route(routes(playlisyHandler));
   },
 };
