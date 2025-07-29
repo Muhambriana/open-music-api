@@ -1,8 +1,9 @@
 import { nanoid } from 'nanoid';
 import { Pool } from 'pg';
 import InvariantError from '../../exceptions/InvariantError.js';
-// import NotFoundError from '../../exceptions/NotFoundError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
+import NotFoundError from '../../exceptions/NotFoundError.js';
+import AuthorizationError from '../../exceptions/AuthorizationError.js';
 
 class PlaylistsService {
   constructor() {
@@ -41,6 +42,38 @@ class PlaylistsService {
     const result = await this._pool.query(query);
 
     return result.rows;
+  }
+
+  async deletePlaylistById(playlistId) {
+    const query = {
+      text: 'DELETE FROM playlists WHERE public_id = $1 RETURNING public_id',
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
+    }
+  }
+
+  async verifyPlaylistOwner(playlistId, owner) {
+    const query = {
+      text: 'SELECT * FROM playlists WHERE public_id = $1',
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
+    }
+
+    const playlist = result.rows[0];
+
+    if (playlist.owner !== owner) {
+      throw new AuthorizationError(ExceptionTypeEnum.NOT_AUTHORIZED.defaultMessage);
+    }
   }
 }
 

@@ -9,6 +9,8 @@ class ExceptionTypeEnum {
 
   static INVALID_REFRESH_TOKEN = new ExceptionTypeEnum(401, 'invalid_refresh_token', 'Invalid refresh token');
 
+  static NOT_AUTHORIZED = new ExceptionTypeEnum(403, 'not_authorized', 'Not Authorized');
+
   static SONG_NOT_EXIST = new ExceptionTypeEnum(601, 'song_not_exist', 'Song not exist');
 
   static ALBUM_NOT_EXIST = new ExceptionTypeEnum(602, 'album_not_exist', 'Album not exist');
@@ -24,6 +26,8 @@ class ExceptionTypeEnum {
   static PLAYLIST_FAILED_TO_CREATE = new ExceptionTypeEnum(607, 'playlist_failed_to_create', 'Playlist failed to create');
 
   static USER_NOT_EXIST = new ExceptionTypeEnum(605, 'user_not_exist', 'User not exist');
+
+  static PLAYLIST_NOT_EXIST = new ExceptionTypeEnum(605, 'playlist_not_exist', 'Playlist not exist');
 }
 
 Object.freeze(ExceptionTypeEnum); // Prevent further modification

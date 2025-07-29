@@ -20,7 +20,7 @@ class PlaylistsHandler {
     const playlistId = await this._playlistsService.addPlaylist({ name, owner: user.rec_id });
 
     const response = h.response({
-      status: SuccessTypeEnum.SUCCESS.code,
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
       message: SuccessTypeEnum.SUCCESSFULLY_CREATED.message('Playlist'),
       data: {
         playlistId,
@@ -41,6 +41,21 @@ class PlaylistsHandler {
       data: {
         playlists,
       },
+    };
+  }
+
+  async deletePlaylistByIdHandler(request) {
+    const { playlistId } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+    const user = await this._usersService.getUserById(credentialId);
+    const owner = user.rec_id;
+
+    await this._playlistsService.verifyPlaylistOwner(playlistId, owner);
+    await this._playlistsService.deletePlaylistById(playlistId, owner);
+
+    return {
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Playlist'),
     };
   }
 }
