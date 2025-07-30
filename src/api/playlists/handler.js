@@ -83,6 +83,23 @@ class PlaylistsHandler {
     response.code(SuccessTypeEnum.SUCCESSFULLY_CREATED.code);
     return response;
   }
+
+  async getPlaylistSongsHandler(request) {
+    const { playlistId } = request.params;
+
+    const playlist = await this._playlistsService.getPlaylistById(playlistId);
+    const songs = await this._playlistsService.getPlaylistSongs(playlistId);
+
+    return {
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      data: {
+        playlist: {
+          ...playlist,
+          songs,
+        },
+      },
+    };
+  }
 }
 
 export default PlaylistsHandler;

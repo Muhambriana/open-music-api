@@ -105,6 +105,41 @@ class PlaylistsService {
 
     return result.rows[0].recid;
   }
+
+  async getPlaylistById(playlistId) {
+    const query = {
+      text: `SELECT p.public_id as id, p.name, u.username
+      FROM playlists p
+      JOIN users u ON u.rec_id = p.owner
+      WHERE p.public_id = $1
+      `,
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
+    }
+
+    return result.rows[0];
+  }
+
+  async getPlaylistSongs(playlistId) {
+    const query = {
+      text: `SELECT s.public_id, s.title, s.performer
+      FROM songs s
+      JOIN playlist_songs ps ON ps.song_id = s.rec_id
+      JOIN playlists p ON p.rec_id = ps.playlist_id
+      WHERE p.public_id = $1
+      `,
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
 }
 
 export default PlaylistsService;
