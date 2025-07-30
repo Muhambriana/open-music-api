@@ -1,9 +1,9 @@
-import { nanoid } from 'nanoid';
 import { Pool } from 'pg';
 import InvariantError from '../../exceptions/InvariantError.js';
 import { mapAlbumWithSongDBToModel } from '../../utils/index.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
+import { generateNanoid } from '../../utils/helper.js';
 
 class AlbumsService {
   constructor() {
@@ -15,7 +15,7 @@ class AlbumsService {
   }
 
   async addAlbum({ name, year }) {
-    const albumId = nanoid();
+    const albumId = generateNanoid('album');
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 

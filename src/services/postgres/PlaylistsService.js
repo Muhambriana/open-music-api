@@ -1,5 +1,5 @@
-import { nanoid } from 'nanoid';
 import { Pool } from 'pg';
+import { generateNanoid } from '../../utils/helper.js';
 import InvariantError from '../../exceptions/InvariantError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
@@ -11,7 +11,7 @@ class PlaylistsService {
   }
 
   async addPlaylist({ name, owner }) {
-    const playlistId = nanoid(10);
+    const playlistId = generateNanoid('playlist');
 
     const query = {
       text: 'INSERT INTO playlists(public_id, name, owner) VALUES ($1, $2, $3) RETURNING public_id',

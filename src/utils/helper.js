@@ -1,3 +1,5 @@
+import { nanoid } from 'nanoid';
+
 /**
  * Get real DateTime (Reusable)
  * @returns DateTime as string
@@ -6,4 +8,14 @@ function getDateTimeNow() {
   return new Date().toISOString();
 }
 
-export default getDateTimeNow;
+function generateNanoid(prefix) {
+  if (!prefix) {
+    throw new Error('Prefix can not be null');
+  }
+  return `${prefix}-${nanoid(12)}`;
+}
+
+export {
+  getDateTimeNow,
+  generateNanoid,
+};

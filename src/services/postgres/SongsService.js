@@ -1,9 +1,8 @@
-import { nanoid } from 'nanoid';
 import { Pool } from 'pg';
+import { getDateTimeNow, generateNanoid } from '../../utils/helper.js';
 import InvariantError from '../../exceptions/InvariantError.js';
 import { mapSongDBToModel } from '../../utils/index.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
-import getDateTimeNow from '../../utils/helper.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 
 class SongsService {
@@ -30,7 +29,7 @@ class SongsService {
       album = await this._albumsService.getAlbumById(albumId);
     }
 
-    const songId = nanoid();
+    const songId = generateNanoid('song');
     const createdAt = getDateTimeNow();
     const updatedAt = createdAt;
 

@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
-import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
+import { generateNanoid } from '../../utils/helper.js';
 import InvariantError from '../../exceptions/InvariantError.js';
 import AuthenticationError from '../../exceptions/AuthenticationError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
@@ -14,7 +14,7 @@ class UsersService {
   async addUser({ username, password, fullname }) {
     await this.verifyNewUsername(username);
 
-    const id = `user-${nanoid(16)}`;
+    const id = generateNanoid('user');
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = {
