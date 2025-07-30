@@ -62,8 +62,13 @@ class PlaylistsHandler {
 
   async postSongIntoPlaylistHandler(request, h) {
     this._validator.validatePostSongIntoPlaylistPayload(request.payload);
+
+    const { id: credentialId } = request.auth.credentials;
     const { playlistId } = request.params;
     const { songId } = request.payload;
+
+    const user = await this._usersService.getUserById(credentialId);
+    await this._playlistsService.verifyPlaylistOwner(playlistId, user.rec_id);
 
     const existPlaylistId = await this._playlistsService.getPlaylistRecordId(playlistId);
     const existSongId = await this._songsService.getSongRecordId(songId);
