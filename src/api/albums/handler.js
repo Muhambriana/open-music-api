@@ -2,8 +2,9 @@ import autoBind from 'auto-bind';
 import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 
 class AlbumsHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(albumsService, songsService, validator) {
+    this._albumsService = albumsService;
+    this._songsService = songsService;
     this._validator = validator;
 
     autoBind(this);
@@ -14,7 +15,7 @@ class AlbumsHandler {
 
     const { name, year } = request.payload;
 
-    const albumId = await this._service.addAlbum({ name, year });
+    const albumId = await this._albumsService.addAlbum({ name, year });
 
     const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
@@ -29,11 +30,16 @@ class AlbumsHandler {
 
   async getAlbumByIdHandler(request) {
     const { albumId } = request.params;
-    const album = await this._service.getAlbumAndSongsByAlbumId(albumId);
+    const album = await this._albumsService.getAlbumById(albumId);
+    const songs = await this._songsService.getSongsByAlbumId(albumId);
+
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
-        album,
+        album: {
+          ...album,
+          songs,
+        },
       },
     };
   }
@@ -43,7 +49,7 @@ class AlbumsHandler {
 
     const { albumId } = request.params;
 
-    await this._service.editAlbumById(albumId, request.payload);
+    await this._albumsService.editAlbumById(albumId, request.payload);
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
@@ -54,7 +60,7 @@ class AlbumsHandler {
   async deleteAlbumByIdHandler(request) {
     const { albumId } = request.params;
 
-    await this._service.deleteAlbumById(albumId);
+    await this._albumsService.deleteAlbumById(albumId);
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,

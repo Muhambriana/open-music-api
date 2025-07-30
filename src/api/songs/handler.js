@@ -2,8 +2,9 @@ import autoBind from 'auto-bind';
 import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 
 class SongsHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(songsService, albumsService, validator) {
+    this._songsService = songsService;
+    this._albumsService = albumsService;
     this._validator = validator;
 
     autoBind(this);
@@ -18,10 +19,16 @@ class SongsHandler {
       genre,
       performer,
       duration,
-      albumId,
+      albumId: publicId,
     } = request.payload;
 
-    const songId = await this._service.addSong({
+    let albumId = null;
+
+    if (publicId) {
+      albumId = await this._albumsService.getAlbumRecordId(publicId);
+    }
+
+    const songId = await this._songsService.addSong({
       title,
       year,
       genre,
@@ -47,7 +54,7 @@ class SongsHandler {
 
     await this._validator.validateSongQuery({ title, performer });
 
-    const songs = await this._service.getSongs(title, performer);
+    const songs = await this._songsService.getSongs(title, performer);
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
@@ -60,7 +67,7 @@ class SongsHandler {
   async getSongByIdHandler(request) {
     const { songId } = request.params;
 
-    const song = await this._service.getSongById(songId);
+    const song = await this._songsService.getSongById(songId);
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
@@ -74,8 +81,29 @@ class SongsHandler {
     this._validator.validateSongPayload(request.payload);
 
     const { songId } = request.params;
+    const {
+      title,
+      year,
+      genre,
+      performer,
+      duration,
+      albumId: publicId,
+    } = request.payload;
 
-    await this._service.editSongById(songId, request.payload);
+    let albumId = null;
+
+    if (publicId) {
+      albumId = await this._albumsService.getAlbumRecordId(publicId);
+    }
+
+    await this._songsService.editSongById(songId, {
+      title,
+      year,
+      genre,
+      performer,
+      duration,
+      albumId,
+    });
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
@@ -86,7 +114,7 @@ class SongsHandler {
   async deleteSongByIdHandler(request) {
     const { songId } = request.params;
 
-    await this._service.deleteSongById(songId);
+    await this._songsService.deleteSongById(songId);
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,

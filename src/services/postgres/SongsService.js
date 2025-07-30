@@ -8,11 +8,6 @@ import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 class SongsService {
   constructor() {
     this._pool = new Pool();
-    this._albumsService = null;
-  }
-
-  setAlbumsService(albumsService) {
-    this._albumsService = albumsService;
   }
 
   async addSong({
@@ -23,12 +18,6 @@ class SongsService {
     duration,
     albumId,
   }) {
-    let album = null;
-
-    if (albumId) {
-      album = await this._albumsService.getAlbumById(albumId);
-    }
-
     const songId = generateNanoid('song');
     const createdAt = getDateTimeNow();
     const updatedAt = createdAt;
@@ -42,7 +31,7 @@ class SongsService {
         genre,
         performer,
         duration,
-        album ? album.rec_id : null,
+        albumId,
         createdAt,
         updatedAt,
       ],
@@ -108,12 +97,6 @@ class SongsService {
     duration,
     albumId,
   }) {
-    let album = null;
-
-    if (albumId) {
-      album = await this._albumsService.getAlbumById(albumId);
-    }
-
     const updatedAt = getDateTimeNow();
 
     const query = {
@@ -124,7 +107,7 @@ class SongsService {
         genre,
         performer,
         duration,
-        album ? album.rec_id : null,
+        albumId,
         updatedAt,
         songId,
       ],
@@ -152,7 +135,10 @@ class SongsService {
 
   async getSongsByAlbumId(albumId) {
     const query = {
-      text: 'SELECT public_id as id, title, performer FROM songs WHERE album_id = $1',
+      text: `SELECT s.public_id as id, s.title, s.performer 
+      FROM songs s
+      JOIN albums a ON a.rec_id = s.album_id 
+      WHERE a.public_id = $1`,
       values: [albumId],
     };
 

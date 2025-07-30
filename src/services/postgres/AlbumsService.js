@@ -1,6 +1,5 @@
 import { Pool } from 'pg';
 import InvariantError from '../../exceptions/InvariantError.js';
-import { mapAlbumWithSongDBToModel } from '../../utils/index.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 import { generateNanoid } from '../../utils/helper.js';
@@ -8,10 +7,6 @@ import { generateNanoid } from '../../utils/helper.js';
 class AlbumsService {
   constructor() {
     this._pool = new Pool();
-  }
-
-  setSongsService(songsService) {
-    this._songsService = songsService;
   }
 
   async addAlbum({ name, year }) {
@@ -37,7 +32,7 @@ class AlbumsService {
 
   async getAlbumById(albumId) {
     const queryAlbums = {
-      text: 'SELECT * FROM albums WHERE public_id = $1',
+      text: 'SELECT public_id as id, name, year FROM albums WHERE public_id = $1',
       values: [albumId],
     };
 
@@ -48,16 +43,6 @@ class AlbumsService {
     }
 
     return result.rows[0];
-  }
-
-  async getAlbumAndSongsByAlbumId(albumId) {
-    const album = await this.getAlbumById(albumId);
-    const songs = await this._songsService.getSongsByAlbumId(album.rec_id);
-
-    return mapAlbumWithSongDBToModel({
-      ...album,
-      songs,
-    });
   }
 
   async editAlbumById(albumId, { name, year }) {
@@ -86,6 +71,21 @@ class AlbumsService {
     if (!result.rows.length) {
       throw new NotFoundError(ExceptionTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
+  }
+
+  async getAlbumRecordId(albumId) {
+    const queryAlbums = {
+      text: 'SELECT rec_id as recid FROM albums WHERE public_id = $1',
+      values: [albumId],
+    };
+
+    const result = await this._pool.query(queryAlbums);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(ExceptionTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
+    }
+
+    return result.rows[0].recid;
   }
 }
 
