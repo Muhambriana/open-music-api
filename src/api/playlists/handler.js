@@ -4,6 +4,7 @@ import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 class PlaylistsHandler {
   constructor(playlistsService, songsService, usersService, validator) {
     this._playlistsService = playlistsService;
+    this._songsService = songsService;
     this._usersService = usersService;
     this._validator = validator;
 
@@ -67,7 +68,7 @@ class PlaylistsHandler {
     const existPlaylistId = await this._playlistsService.getPlaylistRecordId(playlistId);
     const existSongId = await this._songsService.getSongRecordId(songId);
 
-    await this._playlistsService.postSongIntoPlaylist(existPlaylistId, existSongId);
+    await this._playlistsService.addSongIntoPlaylist(existPlaylistId, existSongId);
 
     const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,

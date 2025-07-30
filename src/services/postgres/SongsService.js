@@ -164,7 +164,7 @@ class SongsService {
 
   async getSongRecordId(songId) {
     const query = {
-      text: 'SELECT rec_id as recId FROM WHERE public_id = $1',
+      text: 'SELECT rec_id as recid FROM songs WHERE public_id = $1',
       values: [songId],
     };
 
@@ -174,7 +174,7 @@ class SongsService {
       throw new NotFoundError(ExceptionTypeEnum.SONG_NOT_EXIST.defaultMessage);
     }
 
-    return result.rows[0].recId;
+    return result.rows[0].recid;
   }
 }
 

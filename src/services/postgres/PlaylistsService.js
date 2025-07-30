@@ -93,7 +93,7 @@ class PlaylistsService {
 
   async getPlaylistRecordId(playlistId) {
     const query = {
-      text: 'SELECT rec_id as recId FROM playlists WHERE public_id = $1',
+      text: 'SELECT rec_id as recid FROM playlists WHERE public_id = $1',
       values: [playlistId],
     };
 
@@ -103,7 +103,7 @@ class PlaylistsService {
       throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
     }
 
-    return result.rows[0].recId;
+    return result.rows[0].recid;
   }
 }
 
