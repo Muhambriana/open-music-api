@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import { getDateTimeNow, generateNanoid } from '../../utils/helper.js';
 import InvariantError from '../../exceptions/InvariantError.js';
-import { mapSongDBToModel } from '../../utils/index.js';
+import mapSongDBToModel from '../../utils/index.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 

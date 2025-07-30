@@ -1,14 +1,4 @@
 /* eslint-disable camelcase */
-const mapAlbumDBToModel = ({
-  public_id,
-  name,
-  year,
-}) => ({
-  id: public_id,
-  name,
-  year,
-});
-
 const mapSongDBToModel = ({
   public_id,
   title,
@@ -25,16 +15,4 @@ const mapSongDBToModel = ({
   duration,
 });
 
-const mapAlbumWithSongDBToModel = ({
-  public_id,
-  name,
-  year,
-  songs = [],
-}) => ({
-  id: public_id,
-  name,
-  year,
-  songs,
-});
-
-export { mapAlbumDBToModel, mapSongDBToModel, mapAlbumWithSongDBToModel };
+export default mapSongDBToModel;
