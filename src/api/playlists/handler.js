@@ -17,8 +17,8 @@ class PlaylistsHandler {
     const { name } = request.payload;
     const { id: credentialId } = request.auth.credentials;
 
-    const user = await this._usersService.getUserById(credentialId);
-    const playlistId = await this._playlistsService.addPlaylist({ name, owner: user.rec_id });
+    const userId = await this._usersService.getUserRecordId(credentialId);
+    const playlistId = await this._playlistsService.addPlaylist({ name, owner: userId });
 
     const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
@@ -34,8 +34,8 @@ class PlaylistsHandler {
 
   async getPlaylistsHandler(request) {
     const { id: credentialId } = request.auth.credentials;
-    const user = await this._usersService.getUserById(credentialId);
-    const playlists = await this._playlistsService.getPlaylistsByUserId(user.rec_id);
+    const userId = await this._usersService.getUserRecordId(credentialId);
+    const playlists = await this._playlistsService.getPlaylistsByUserId(userId);
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
@@ -48,8 +48,8 @@ class PlaylistsHandler {
   async deletePlaylistByIdHandler(request) {
     const { playlistId } = request.params;
     const { id: credentialId } = request.auth.credentials;
-    const user = await this._usersService.getUserById(credentialId);
-    const owner = user.rec_id;
+
+    const owner = await this._usersService.getUserRecordId(credentialId);
 
     await this._playlistsService.verifyPlaylistOwner(playlistId, owner);
     await this._playlistsService.deletePlaylistById(playlistId, owner);
@@ -67,8 +67,8 @@ class PlaylistsHandler {
     const { playlistId } = request.params;
     const { songId } = request.payload;
 
-    const user = await this._usersService.getUserById(credentialId);
-    await this._playlistsService.verifyPlaylistOwner(playlistId, user.rec_id);
+    const userId = await this._usersService.getUserRecordId(credentialId);
+    await this._playlistsService.verifyPlaylistOwner(playlistId, userId);
 
     const existPlaylistId = await this._playlistsService.getPlaylistRecordId(playlistId);
     const existSongId = await this._songsService.getSongRecordId(songId);

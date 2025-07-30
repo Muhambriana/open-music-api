@@ -67,10 +67,10 @@ class UsersService {
     return id;
   }
 
-  async getUserById(id) {
+  async getUserRecordId(userId) {
     const query = {
-      text: 'SELECT * from users WHERE public_id = $1',
-      values: [id],
+      text: 'SELECT rec_id as recid from users WHERE public_id = $1',
+      values: [userId],
     };
 
     const result = await this._pool.query(query);
@@ -79,7 +79,7 @@ class UsersService {
       throw new NotFoundError(ExceptionTypeEnum.USER_NOT_EXIST);
     }
 
-    return result.rows[0];
+    return result.rows[0].recid;
   }
 }
 
