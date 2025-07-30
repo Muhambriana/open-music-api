@@ -22,11 +22,7 @@ class SongsHandler {
       albumId: publicId,
     } = request.payload;
 
-    let albumId = null;
-
-    if (publicId) {
-      albumId = await this._albumsService.getAlbumRecordId(publicId);
-    }
+    const albumId = publicId ? await this._albumsService.getAlbumRecordId(publicId) : null;
 
     const songId = await this._songsService.addSong({
       title,
@@ -90,11 +86,7 @@ class SongsHandler {
       albumId: publicId,
     } = request.payload;
 
-    let albumId = null;
-
-    if (publicId) {
-      albumId = await this._albumsService.getAlbumRecordId(publicId);
-    }
+    const albumId = publicId ? await this._albumsService.getAlbumRecordId(publicId) : null;
 
     await this._songsService.editSongById(songId, {
       title,
