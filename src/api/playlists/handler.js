@@ -52,7 +52,7 @@ class PlaylistsHandler {
     const owner = await this._usersService.getUserRecordId(credentialId);
 
     await this._playlistsService.verifyPlaylistOwner(playlistId, owner);
-    await this._playlistsService.deletePlaylistById(playlistId, owner);
+    await this._playlistsService.deletePlaylistById(playlistId);
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,

@@ -18,14 +18,14 @@ export const up = (pgm) => {
       type: 'integer',
       notNull: true,
       references: 'playlists(rec_id)',
-      onDelete: 'NO ACTION',
+      onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
     song_id: {
       type: 'integer',
       notNull: true,
       references: 'songs(rec_id)',
-      onDelete: 'NO ACTION',
+      onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
   });
