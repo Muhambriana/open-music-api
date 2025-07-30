@@ -100,6 +100,28 @@ class PlaylistsHandler {
       },
     };
   }
+
+  async deletePlaylistSongByIdHandler(request) {
+    try {
+      const { id: credentialId } = request.auth.credentials;
+      const { playlistId } = request.params;
+      const { songId } = request.payload;
+
+      const owner = await this._usersService.getUserRecordId(credentialId);
+
+      await this._playlistsService.verifyPlaylistOwner(playlistId, owner);
+      await this._playlistsService.deletePlaylistSongById(songId);
+
+      return {
+        status: SuccessTypeEnum.SUCCESS.defaultMessage,
+        message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Song'),
+      };
+    } catch (error) {
+      return {
+        message: error.message,
+      };
+    }
+  }
 }
 
 export default PlaylistsHandler;

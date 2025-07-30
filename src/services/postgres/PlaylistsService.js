@@ -140,6 +140,27 @@ class PlaylistsService {
 
     return result.rows;
   }
+
+  async deletePlaylistSongById(playlistId, songId) {
+    const query = {
+      text: `DELETE
+      FROM playlist_songs ps
+      USING playlists p,songs s
+      WHERE p.rec_id = ps.playlist_id
+        AND s.rec_id = ps.song_id
+        AND p.public_id = $1 
+        AND s.public_id = $2  
+      RETURNING ps.rec_id
+      `,
+      values: [playlistId, songId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Song Or Playlis is not exist');
+    }
+  }
 }
 
 export default PlaylistsService;
