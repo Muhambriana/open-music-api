@@ -22,7 +22,7 @@ import usersPlugin from './api/users/index.js';
 import AuthenticationsService from './services/postgres/AuthenticationsService.js';
 import AuthenticationsValidator from './validator/authentications/index.js';
 import authenticationsPlugin from './api/authentications/index.js';
-import TokenManager from './api/tokenize/TokenManager.js';
+import TokenManager from './tokenize/TokenManager.js';
 
 // Playlist
 import PlaylistsService from './services/postgres/PlaylistsService.js';
