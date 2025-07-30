@@ -34,7 +34,7 @@ class PlaylistsService {
       text: `SELECT p.public_id as id, p.name, u.username
       FROM playlists p
       JOIN users u ON u.rec_id = p.owner
-      WHERE owner = $1
+      WHERE u.public_id = $1
       `,
       values: [userId],
     };
