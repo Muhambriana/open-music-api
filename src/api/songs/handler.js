@@ -1,7 +1,7 @@
 import autoBind from 'auto-bind';
 import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 
-class SongHandler {
+class SongsHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
@@ -95,4 +95,4 @@ class SongHandler {
   }
 }
 
-export default SongHandler;
+export default SongsHandler;

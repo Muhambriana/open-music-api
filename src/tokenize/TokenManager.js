@@ -1,6 +1,6 @@
 import Jwt from '@hapi/jwt';
-import InvariantError from '../../exceptions/InvariantError.js';
-import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
+import InvariantError from '../exceptions/InvariantError.js';
+import ExceptionTypeEnum from '../config/ExceptionTypeEnum.js';
 
 const TokenManager = {
   generateAccessToken: (payload) => Jwt.token.generate(payload, process.env.ACCESS_TOKEN_KEY),

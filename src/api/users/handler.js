@@ -1,7 +1,7 @@
 import autoBind from 'auto-bind';
 import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
 
-class UserHandler {
+class UsersHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
@@ -28,4 +28,4 @@ class UserHandler {
   }
 }
 
-export default UserHandler;
+export default UsersHandler;
