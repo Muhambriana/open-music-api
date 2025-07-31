@@ -39,11 +39,13 @@ class PlaylistsService {
 
   async getPlaylistsByUserId(userId) {
     const query = {
-      text: `SELECT p.public_id as id, p.name, u.username
+      text: `
+      SELECT p.public_id as id, p.name, u.username
       FROM playlists p
+      JOIN users u ON u.rec_id = p.owner
       LEFT JOIN collaborations c ON c.playlist_id = p.rec_id
-      JOIN users u ON u.rec_id = p.owner OR u.rec_id = c.user_id
       WHERE u.public_id = $1
+      OR c.user_id = (SELECT rec_id FROM users WHERE public_id = $1)
       `,
       values: [userId],
     };
