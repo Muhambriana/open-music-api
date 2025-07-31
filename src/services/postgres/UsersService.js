@@ -76,7 +76,7 @@ class UsersService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError(ExceptionTypeEnum.USER_NOT_EXIST);
+      throw new NotFoundError(ExceptionTypeEnum.USER_NOT_EXIST.defaultMessage);
     }
 
     return result.rows[0].recid;

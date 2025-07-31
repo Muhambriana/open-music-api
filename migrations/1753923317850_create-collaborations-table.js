@@ -14,6 +14,11 @@ export const up = (pgm) => {
       type: 'serial',
       primaryKey: true,
     },
+    public_id: {
+      type: 'VARCHAR(50)',
+      unique: true,
+      notNull: true,
+    },
     playlist_id: {
       type: 'integer',
       notNull: true,

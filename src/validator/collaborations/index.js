@@ -2,7 +2,7 @@ import InvariantError from '../../exceptions/InvariantError.js';
 import CollaborationPayloadSchema from './schema.js';
 
 const CollaborationsValidator = {
-  validatePostPlaylistPayload: (payload) => {
+  validateCollaborationtPayload: (payload) => {
     const validationResult = CollaborationPayloadSchema.validate(payload);
 
     if (validationResult.error) {

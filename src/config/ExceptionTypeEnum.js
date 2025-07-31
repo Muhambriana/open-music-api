@@ -25,11 +25,13 @@ class ExceptionTypeEnum {
 
   static PLAYLIST_FAILED_TO_CREATE = new ExceptionTypeEnum(607, 'playlist_failed_to_create', 'Playlist failed to create');
 
-  static USER_NOT_EXIST = new ExceptionTypeEnum(605, 'user_not_exist', 'User not exist');
+  static USER_NOT_EXIST = new ExceptionTypeEnum(608, 'user_not_exist', 'User not exist');
 
-  static PLAYLIST_NOT_EXIST = new ExceptionTypeEnum(605, 'playlist_not_exist', 'Playlist not exist');
+  static PLAYLIST_NOT_EXIST = new ExceptionTypeEnum(609, 'playlist_not_exist', 'Playlist not exist');
 
-  static FAILED_ADD_SONG_INTO_PLAYLIST = new ExceptionTypeEnum(606, 'failed_add_song_into_playlist', 'Failed add song into playlist');
+  static FAILED_ADD_SONG_INTO_PLAYLIST = new ExceptionTypeEnum(610, 'failed_add_song_into_playlist', 'Failed add song into playlist');
+
+  static FAILED_ADD_COLABORATION = new ExceptionTypeEnum(611, 'failed_add_collaboration', 'Failed add collaboration');
 }
 
 Object.freeze(ExceptionTypeEnum); // Prevent further modification

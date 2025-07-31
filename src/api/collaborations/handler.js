@@ -1,0 +1,50 @@
+import autoBind from 'auto-bind';
+import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
+
+class CollaborationsHandler {
+  constructor(
+    collaborationsService,
+    playlistsService,
+    usersService,
+    validator,
+  ) {
+    this._collaborationsService = collaborationsService;
+    this._playlistsService = playlistsService;
+    this._usersService = usersService;
+    this._validator = validator;
+
+    autoBind(this);
+  }
+
+  async postCollaborationHandler(request, h) {
+    this._validator.validateCollaborationtPayload(request.payload);
+
+    const { id: credentialId } = request.auth.credentials;
+    const { playlistId, userId } = request.payload;
+
+    const ownerRecordId = await this._usersService.getUserRecordId(credentialId);
+
+    await this._playlistsService.verifyPlaylistOwner(playlistId, ownerRecordId);
+
+    const playlistRecordId = await this._playlistsService.getPlaylistRecordId(playlistId);
+    const userRecordId = await this._usersService.getUserRecordId(userId);
+
+    const collaborationId = await this._collaborationsService.addCollaboration(
+      playlistRecordId,
+      userRecordId,
+    );
+
+    const response = h.response({
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_CREATED.message('Collaboration'),
+      data: {
+        collaborationId,
+      },
+    });
+
+    response.code(SuccessTypeEnum.SUCCESSFULLY_CREATED.code);
+    return response;
+  }
+}
+
+export default CollaborationsHandler;
