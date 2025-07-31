@@ -10,6 +10,14 @@ class PlaylistsService {
     this._pool = new Pool();
   }
 
+  setCollaborationsService(collaborationsService) {
+    this._collaborationsService = collaborationsService;
+  }
+
+  setUsersService(usersService) {
+    this._usersService = usersService;
+  }
+
   async addPlaylist({ name, owner }) {
     const playlistId = generateNanoid('playlist');
 
@@ -57,7 +65,7 @@ class PlaylistsService {
     }
   }
 
-  async verifyPlaylistOwner(playlistId, owner) {
+  async verifyPlaylistOwner(playlistId, userId) {
     const query = {
       text: 'SELECT * FROM playlists WHERE public_id = $1',
       values: [playlistId],
@@ -70,8 +78,9 @@ class PlaylistsService {
     }
 
     const playlist = result.rows[0];
+    const userRecordId = await this._usersService.getUserRecordId(userId);
 
-    if (playlist.owner !== owner) {
+    if (playlist.owner !== userRecordId) {
       throw new AuthorizationError(ExceptionTypeEnum.NOT_AUTHORIZED.defaultMessage);
     }
   }
@@ -159,6 +168,22 @@ class PlaylistsService {
 
     if (!result.rowCount) {
       throw new NotFoundError('Song Or Playlis is not exist');
+    }
+  }
+
+  async verifyPlaylistAccess(playlistId, userId) {
+    try {
+      await this.verifyPlaylistOwner(playlistId, userId);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+
+      try {
+        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+      } catch {
+        throw error;
+      }
     }
   }
 }

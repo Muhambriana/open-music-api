@@ -32,6 +32,8 @@ class ExceptionTypeEnum {
   static FAILED_ADD_SONG_INTO_PLAYLIST = new ExceptionTypeEnum(610, 'failed_add_song_into_playlist', 'Failed add song into playlist');
 
   static FAILED_ADD_COLABORATION = new ExceptionTypeEnum(611, 'failed_add_collaboration', 'Failed add collaboration');
+
+  static FAILED_COLLABORATION_VERIFICATION = new ExceptionTypeEnum(612, 'failed_collaboration_verification', 'Failed collaboration verification');
 }
 
 Object.freeze(ExceptionTypeEnum); // Prevent further modification

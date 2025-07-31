@@ -24,6 +24,23 @@ class CollaborationsService {
 
     return result.rows[0].public_id;
   }
+
+  async verifyCollaborator(playlistId, userId) {
+    const query = {
+      text: `SELECT * 
+      FROM collaborations c
+      JOIN playlists p ON p.rec_id = c.playlist_id
+      JOIN users u ON u.rec_id = c.user_id
+      WHERE p.public_id = $1 AND u.public_id = $2`,
+      values: [playlistId, userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError(ExceptionTypeEnum.FAILED_COLLABORATION_VERIFICATION.defaultMessage);
+    }
+  }
 }
 
 export default CollaborationsService;
