@@ -189,6 +189,28 @@ class PlaylistsService {
       }
     }
   }
+
+  async addActivity(playlistId, songId, action) {
+    const queryGetData = {
+      text: `SELECT p.rec_id, s.rec_id
+      FROM playlists p
+      JOIN playlist_songs ps ON ps.playlist_id = p.rec_id
+      JOIN songs s ON s.rec_id = ps.song_id
+      WHERE p.public_id = $1 AND s.public_id = $2
+      `,
+      values: [playlistId, songId],
+    };
+
+    const resultQueryGet = await this._pool.query(queryGetData);
+
+    if (!resultQueryGet.rowCount) {
+      throw new NotFoundError('Playlist or Song is not exist');
+    }
+
+    // const queryInsert = {
+    //   text:
+    // }
+  }
 }
 
 export default PlaylistsService;
