@@ -43,6 +43,21 @@ class CollaborationsHandler {
     response.code(SuccessTypeEnum.SUCCESSFULLY_CREATED.code);
     return response;
   }
+
+  async deleteCollaborationHandler(request) {
+    this._validator.validateCollaborationtPayload(request.payload);
+
+    const { id: credentialId } = request.auth.credentials;
+    const { playlistId, userId } = request.payload;
+
+    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+    await this._collaborationsService.deleteCollaboration(playlistId, userId);
+
+    return {
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Collaboration'),
+    };
+  }
 }
 
 export default CollaborationsHandler;
