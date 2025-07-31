@@ -34,8 +34,7 @@ class PlaylistsHandler {
 
   async getPlaylistsHandler(request) {
     const { id: credentialId } = request.auth.credentials;
-    const userId = await this._usersService.getUserRecordId(credentialId);
-    const playlists = await this._playlistsService.getPlaylistsByUserId(userId);
+    const playlists = await this._playlistsService.getPlaylistsByUserId(credentialId);
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
