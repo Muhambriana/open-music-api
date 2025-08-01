@@ -66,10 +66,12 @@ class PlaylistsHandler {
 
     await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
 
-    const existPlaylistId = await this._playlistsService.getPlaylistRecordId(playlistId);
-    const existSongId = await this._songsService.getSongRecordId(songId);
+    const playlistRecId = await this._playlistsService.getPlaylistRecordId(playlistId);
+    const songRecId = await this._songsService.getSongRecordId(songId);
+    const userRecId = await this._usersService.getUserRecordId(credentialId);
 
-    await this._playlistsService.addSongIntoPlaylist(existPlaylistId, existSongId);
+    await this._playlistsService.addSongIntoPlaylist(playlistRecId, songRecId);
+    await this._playlistsService.addActivity(playlistRecId, songRecId, userRecId, 'add');
 
     const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
@@ -107,12 +109,39 @@ class PlaylistsHandler {
     const { playlistId } = request.params;
     const { songId } = request.payload;
 
+    // const playlistRecId = await this._playlistsService.getPlaylistRecordId(playlistId);
+    // const songRecId = await this._songsService.getSongRecordId(songId);
+    const userRecId = await this._usersService.getUserRecordId(credentialId);
+
     await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
-    await this._playlistsService.deletePlaylistSongById(playlistId, songId);
+
+    const deletedData = await this._playlistsService.deletePlaylistSongById(playlistId, songId);
+
+    await this._playlistsService.addActivity(
+      deletedData.playlist_rec_id,
+      deletedData.song_rec_id,
+      userRecId,
+    );
 
     return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Song'),
+    };
+  }
+
+  async getPlaylistSongActivitesHandler(request) {
+    const { id: credentialId } = request.auth.credentials;
+    const { playlistId } = request.params;
+
+    await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
+    const activities = await this._playlistsService.getPlaylistSongActivites(playlistId);
+
+    return {
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      data: {
+        playlistId,
+        activities,
+      },
     };
   }
 }

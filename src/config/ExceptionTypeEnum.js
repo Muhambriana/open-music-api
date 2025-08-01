@@ -34,6 +34,8 @@ class ExceptionTypeEnum {
   static FAILED_ADD_COLABORATION = new ExceptionTypeEnum(611, 'failed_add_collaboration', 'Failed add collaboration');
 
   static FAILED_COLLABORATION_VERIFICATION = new ExceptionTypeEnum(612, 'failed_collaboration_verification', 'Failed collaboration verification');
+
+  static ACTIVITY_FAILED_TO_CREATE = new ExceptionTypeEnum(613, 'activity_failed_to_create', 'Activity failed to create');
 }
 
 Object.freeze(ExceptionTypeEnum); // Prevent further modification

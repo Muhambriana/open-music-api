@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { generateNanoid } from '../../utils/helper.js';
+import { generateNanoid, getDateTimeNow } from '../../utils/helper.js';
 import InvariantError from '../../exceptions/InvariantError.js';
 import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
@@ -162,7 +162,7 @@ class PlaylistsService {
         AND s.rec_id = ps.song_id
         AND p.public_id = $1 
         AND s.public_id = $2  
-      RETURNING ps.rec_id
+      RETURNING ps.playlist_id AS playlist_rec_id, ps.song_id AS song_rec_id
       `,
       values: [playlistId, songId],
     };
@@ -172,6 +172,8 @@ class PlaylistsService {
     if (!result.rowCount) {
       throw new NotFoundError('Song Or Playlis is not exist');
     }
+
+    return result.rows[0];
   }
 
   async verifyPlaylistAccess(playlistId, userId) {
@@ -190,26 +192,45 @@ class PlaylistsService {
     }
   }
 
-  async addActivity(playlistId, songId, action) {
-    const queryGetData = {
-      text: `SELECT p.rec_id, s.rec_id
-      FROM playlists p
-      JOIN playlist_songs ps ON ps.playlist_id = p.rec_id
-      JOIN songs s ON s.rec_id = ps.song_id
-      WHERE p.public_id = $1 AND s.public_id = $2
-      `,
-      values: [playlistId, songId],
+  async addActivity(playlistRecId, songRecId, userRecId, action) {
+    const currentDateTime = getDateTimeNow();
+
+    const query = {
+      text: 'INSERT INTO playlist_song_activities (playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, $5) RETURNING rec_id',
+      values: [
+        playlistRecId,
+        songRecId,
+        userRecId,
+        action,
+        currentDateTime,
+      ],
     };
 
-    const resultQueryGet = await this._pool.query(queryGetData);
+    const result = await this._pool.query(query);
 
-    if (!resultQueryGet.rowCount) {
-      throw new NotFoundError('Playlist or Song is not exist');
+    if (!result.rowCount) {
+      throw new InvariantError(ExceptionTypeEnum.ACTIVITY_FAILED_TO_CREATE.defaultMessage);
+    }
+  }
+
+  async getPlaylistSongActivites(playlistId) {
+    const query = {
+      text: `SELECT u.username, s.title, psa.action, psa.time
+      FROM playlist_song_activities psa
+      JOIN songs s ON s.rec_id = psa.song_id
+      JOIN users u ON u.rec_id = psa.user_id
+      WHERE p.public_id = $1
+      `,
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
     }
 
-    // const queryInsert = {
-    //   text:
-    // }
+    return result.rows;
   }
 }
 
