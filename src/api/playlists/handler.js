@@ -109,8 +109,6 @@ class PlaylistsHandler {
     const { playlistId } = request.params;
     const { songId } = request.payload;
 
-    // const playlistRecId = await this._playlistsService.getPlaylistRecordId(playlistId);
-    // const songRecId = await this._songsService.getSongRecordId(songId);
     const userRecId = await this._usersService.getUserRecordId(credentialId);
 
     await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
