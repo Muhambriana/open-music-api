@@ -4,7 +4,7 @@
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('albums', {
+  pgm.createTable('songs', {
     rec_id: {
       type: 'serial',
       primaryKey: true,
@@ -14,7 +14,7 @@ export const up = (pgm) => {
       notNull: true,
       unique: true,
     },
-    name: {
+    title: {
       type: 'TEXT',
       notNull: true,
     },
@@ -22,15 +22,22 @@ export const up = (pgm) => {
       type: 'integer',
       notNull: true,
     },
-    created_at: {
-      type: 'timestamptz',
+    genre: {
+      type: 'TEXT',
       notNull: true,
-      default: pgm.func('current_timestamp'),
     },
-    updated_at: {
-      type: 'timestamptz',
+    performer: {
+      type: 'TEXT',
       notNull: true,
-      default: pgm.func('current_timestamp'),
+    },
+    duration: {
+      type: 'integer',
+    },
+    album_id: {
+      type: 'integer',
+      references: 'albums(rec_id)',
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE',
     },
   });
 };
@@ -41,5 +48,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('albums');
+  pgm.dropTable('songs');
 };

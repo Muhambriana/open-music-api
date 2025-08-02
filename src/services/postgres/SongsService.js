@@ -19,11 +19,9 @@ class SongsService {
     albumId,
   }) {
     const songId = generateNanoid('song');
-    const createdAt = getDateTimeNow();
-    const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO songs (public_id, title, year, genre, performer, duration, album_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING public_id',
+      text: 'INSERT INTO songs (public_id, title, year, genre, performer, duration, album_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING public_id',
       values: [
         songId,
         title,
@@ -32,8 +30,6 @@ class SongsService {
         performer,
         duration,
         albumId,
-        createdAt,
-        updatedAt,
       ],
     };
 
@@ -97,10 +93,8 @@ class SongsService {
     duration,
     albumId,
   }) {
-    const updatedAt = getDateTimeNow();
-
     const query = {
-      text: 'UPDATE songs SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6, updated_at = $7 WHERE public_id = $8 RETURNING public_id',
+      text: 'UPDATE songs SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6 WHERE public_id = $7 RETURNING public_id',
       values: [
         title,
         year,
@@ -108,7 +102,6 @@ class SongsService {
         performer,
         duration,
         albumId,
-        updatedAt,
         songId,
       ],
     };
