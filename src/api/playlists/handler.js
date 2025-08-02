@@ -121,6 +121,7 @@ class PlaylistsHandler {
       deletedData.playlist_rec_id,
       deletedData.song_rec_id,
       userRecId,
+      'delete',
     );
 
     return {
