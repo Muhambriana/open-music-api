@@ -221,6 +221,7 @@ class PlaylistsService {
       JOIN songs s ON s.rec_id = psa.song_id
       JOIN users u ON u.rec_id = psa.user_id
       WHERE p.public_id = $1
+      ORDER BY psa.rec_id
       `,
       values: [playlistId],
     };
