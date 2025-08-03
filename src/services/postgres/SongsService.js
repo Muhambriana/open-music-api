@@ -44,29 +44,13 @@ class SongsService {
     return resultSongId;
   }
 
-  async getSongs(title, performer) {
-    const values = [];
-    const conditions = [];
-
-    if (title) {
-      values.push(`%${title}%`);
-      conditions.push(`title ILIKE $${values.length}`);
-    }
-
-    if (performer) {
-      values.push(`%${performer}%`);
-      conditions.push(`performer ILIKE $${values.length}`);
-    }
-
-    const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-
+  async getSongs(title = '', performer = '') {
     const query = {
-      text: `SELECT public_id as id, title, performer FROM songs ${whereClause}`,
-      values,
+      text: 'SELECT public_id as id, title, performer FROM songs WHERE title ILIKE $1 and performer ILIKE $2',
+      values: [`%${title}%`, `%${performer}%`],
     };
-
-    const result = await this._pool.query(query);
-    return result.rows;
+    const { rows } = await this._pool.query(query);
+    return rows;
   }
 
   async getSongById(songId) {
