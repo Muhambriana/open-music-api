@@ -2,8 +2,9 @@ import autoBind from 'auto-bind';
 import SuccessTypeEnum from '../../utils/config/SuccessTypeEnum.js';
 
 class ExportsHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(producerService, playlistsService, validator) {
+    this._producerService = producerService;
+    this._playlistsService = playlistsService;
     this._validator = validator;
 
     autoBind(this);
@@ -12,12 +13,15 @@ class ExportsHandler {
   async postExportPlaylistSongsHandler(request, h) {
     this._validator.validateExportPlaylistSongsPayload(request.payload);
 
-    const message = {
-      userId: request.auth.credentials.id,
-      targetEmail: request.payload.targetEmail,
-    };
+    const { id: credentialId } = request.auth.credentials;
+    const { playlistId } = request.params;
+    const { targetEmail } = request.payload;
 
-    await this._service.sendMessage('export:playlistSongs', JSON.stringify(message));
+    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+
+    const message = { playlistId, targetEmail };
+
+    await this._producerService.sendMessage('export:playlistSongs', JSON.stringify(message));
 
     const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
