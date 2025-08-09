@@ -1,6 +1,8 @@
 import Hapi from '@hapi/hapi';
 import Jwt from '@hapi/jwt';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import path from 'path';
 import ClientError from './exceptions/ClientError.js';
 
 // Albums
@@ -39,6 +41,9 @@ import ExportsValidator from './validator/exports/index.js';
 import exportPlugin from './api/export/index.js';
 import ProducerService from './services/rabbitmq/ProducerService.js';
 
+// Storage Service
+import StorageService from './services/storage/StorageService.js';
+
 dotenv.config();
 
 const init = async () => {
@@ -48,6 +53,9 @@ const init = async () => {
   const authenticationsService = new AuthenticationsService();
   const playlistsService = new PlaylistsService();
   const collaborationsService = new CollaborationsService();
+
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const storageService = new StorageService(path.resolve(__dirname, 'api/albums/file/covers'));
 
   playlistsService.setCollaborationsService(collaborationsService);
   playlistsService.setUsersService(usersService);
@@ -90,6 +98,7 @@ const init = async () => {
       options: {
         albumsService,
         songsService,
+        storageService,
         validator: AlbumsValidator,
       },
     },

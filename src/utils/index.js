@@ -15,4 +15,16 @@ const mapSongDBToModel = ({
   duration,
 });
 
-export default mapSongDBToModel;
+const mapAlbumDBToModel = ({
+  public_id,
+  name,
+  year,
+  cover,
+}) => ({
+  id: public_id,
+  name,
+  year,
+  coverUrl: cover,
+});
+
+export { mapSongDBToModel, mapAlbumDBToModel };

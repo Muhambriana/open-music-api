@@ -3,6 +3,7 @@ import InvariantError from '../../exceptions/InvariantError.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
 import { generateNanoid } from '../../utils/helper.js';
+import { mapAlbumDBToModel } from '../../utils/index.js';
 
 class AlbumsService {
   constructor() {
@@ -30,17 +31,17 @@ class AlbumsService {
 
   async getAlbumById(albumId) {
     const queryAlbums = {
-      text: 'SELECT public_id as id, name, year FROM albums WHERE public_id = $1',
+      text: 'SELECT public_id, name, year, cover FROM albums WHERE public_id = $1',
       values: [albumId],
     };
 
-    const result = await this._pool.query(queryAlbums);
+    const { rows } = await this._pool.query(queryAlbums);
 
-    if (!result.rowCount) {
+    if (!rows.length) {
       throw new NotFoundError(ExceptionTypeEnum.ALBUM_NOT_EXIST.defaultMessage);
     }
 
-    return result.rows[0];
+    return rows.map(mapAlbumDBToModel)[0];
   }
 
   async editAlbumById(albumId, { name, year }) {
@@ -82,6 +83,23 @@ class AlbumsService {
     }
 
     return result.rows[0].recid;
+  }
+
+  async updateAlbumCoverById(albumId, cover) {
+    try {
+      const query = {
+        text: 'UPDATE albums SET cover = $1 WHERE public_id = $2 RETURNING public_id',
+        values: [cover, albumId],
+      };
+
+      const result = await this._pool.query(query);
+
+      if (!result.rowCount) {
+        throw new InvariantError(ExceptionTypeEnum.FAILED_UPDATE_ALBUM_COVER.defaultMessage);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 

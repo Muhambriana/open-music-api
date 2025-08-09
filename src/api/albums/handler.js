@@ -2,9 +2,10 @@ import autoBind from 'auto-bind';
 import SuccessTypeEnum from '../../utils/config/SuccessTypeEnum.js';
 
 class AlbumsHandler {
-  constructor(albumsService, songsService, validator) {
+  constructor(albumsService, songsService, storageService, validator) {
     this._albumsService = albumsService;
     this._songsService = songsService;
+    this._storageService = storageService;
     this._validator = validator;
 
     autoBind(this);
@@ -66,6 +67,25 @@ class AlbumsHandler {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       message: SuccessTypeEnum.SUCCESSFULLY_DELETED.message('Album'),
     };
+  }
+
+  async postAlbumCover(request, h) {
+    const { cover } = request.payload;
+    this._validator.validateAlbumCoverHeaders(cover.hapi.headers);
+
+    const { albumId } = request.params;
+    const filename = await this._storageService.writeFile(cover, cover.hapi);
+    const fileUrl = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
+
+    await this._albumsService.updateAlbumCoverById(albumId, fileUrl);
+
+    const response = h.response({
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: 'Succesfully upload cover',
+    });
+
+    response.code(201);
+    return response;
   }
 }
 
