@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import { generateNanoid } from '../../utils/helper.js';
 import InvariantError from '../../exceptions/InvariantError.js';
-import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
+import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 
 class CollaborationsService {

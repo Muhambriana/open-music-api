@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import InvariantError from '../../exceptions/InvariantError.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
-import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
+import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
 import { generateNanoid } from '../../utils/helper.js';
 
 class AlbumsService {

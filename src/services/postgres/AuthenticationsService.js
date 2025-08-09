@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import InvariantError from '../../exceptions/InvariantError.js';
-import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
+import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
 
 class AuthenticationsService {
   constructor() {

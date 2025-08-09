@@ -1,5 +1,5 @@
 import autoBind from 'auto-bind';
-import SuccessTypeEnum from '../../config/SuccessTypeEnum.js';
+import SuccessTypeEnum from '../../utils/config/SuccessTypeEnum.js';
 
 class AlbumsHandler {
   constructor(albumsService, songsService, validator) {

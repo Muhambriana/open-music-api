@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { generateNanoid } from '../../utils/helper.js';
 import InvariantError from '../../exceptions/InvariantError.js';
 import AuthenticationError from '../../exceptions/AuthenticationError.js';
-import ExceptionTypeEnum from '../../config/ExceptionTypeEnum.js';
+import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 
 class UsersService {
