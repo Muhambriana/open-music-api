@@ -42,6 +42,8 @@ class ExceptionTypeEnum {
   static FAILED_ADD_ALBUM_LIKE = new ExceptionTypeEnum(615, 'failed_add_album_like', 'Failed add like');
 
   static FAILED_DELETE_ALBUM_LIKE = new ExceptionTypeEnum(615, 'failed_delete_album_like', 'Failed delete like');
+
+  static USER_ALREADY_LIKED_ALBUM = new ExceptionTypeEnum(616, 'already_liked_album', 'You have already liked this album');
 }
 
 Object.freeze(ExceptionTypeEnum); // Prevent further modification

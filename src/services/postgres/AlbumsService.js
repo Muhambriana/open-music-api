@@ -4,6 +4,7 @@ import NotFoundError from '../../exceptions/NotFoundError.js';
 import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
 import { generateNanoid } from '../../utils/helper.js';
 import { mapAlbumDBToModel } from '../../utils/index.js';
+import ClientError from '../../exceptions/ClientError.js';
 
 class AlbumsService {
   constructor() {
@@ -103,6 +104,8 @@ class AlbumsService {
   }
 
   async addAlbumLike(userRecId, albumRecId) {
+    await this.isLikeAlbumExist(userRecId, albumRecId);
+
     const query = {
       text: 'INSERT INTO user_album_likes (user_id, album_id) VALUES ($1, $2) RETURNING rec_id',
       values: [userRecId, albumRecId],
@@ -115,7 +118,20 @@ class AlbumsService {
     }
   }
 
-  async deleteALbumLike(userId, albumId) {
+  async isLikeAlbumExist(userRecId, albumRecId) {
+    const query = {
+      text: 'SELECT * FROM user_album_likes WHERE user_id = $1 AND album_id = $2',
+      values: [userRecId, albumRecId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount > 0) {
+      throw new ClientError(ExceptionTypeEnum.USER_ALREADY_LIKED_ALBUM.defaultMessage);
+    }
+  }
+
+  async deleteAlbumLike(userId, albumId) {
     const query = {
       text: `DELETE
       FROM user_album_likes ual
@@ -138,7 +154,7 @@ class AlbumsService {
 
   async getTotalAlbumLikes(albumId) {
     const query = {
-      text: `SELECT COUNT(ual.*) as total
+      text: `SELECT COUNT(ual.*)::int as total
       FROM user_album_likes ual
       JOIN albums a ON a.rec_id = ual.album_id
       WHERE a.public_id = $1
