@@ -157,18 +157,32 @@ class AlbumsService {
   }
 
   async getTotalAlbumLikes(albumId) {
-    const query = {
-      text: `SELECT COUNT(ual.*)::int as total
+    try {
+      const result = await this._cacheService.get(`album-likes:${albumId}`);
+      return {
+        source: 'cache',
+        totalLikes: JSON.parse(result),
+      };
+    } catch {
+      const query = {
+        text: `SELECT COUNT(ual.*)::int as likes
       FROM user_album_likes ual
       JOIN albums a ON a.rec_id = ual.album_id
       WHERE a.public_id = $1
       `,
-      values: [albumId],
-    };
+        values: [albumId],
+      };
 
-    const { rows } = await this._pool.query(query);
+      const { rows } = await this._pool.query(query);
+      const { likes } = rows[0];
 
-    return rows[0].total;
+      await this._cacheService.set(`album-likes:${albumId}`, JSON.stringify(likes));
+
+      return {
+        source: 'database',
+        totalLikes: likes,
+      };
+    }
   }
 }
 

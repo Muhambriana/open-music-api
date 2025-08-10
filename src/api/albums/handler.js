@@ -125,17 +125,20 @@ class AlbumsHandler {
     };
   }
 
-  async getTotalAlbumLikesHandler(request) {
+  async getTotalAlbumLikesHandler(request, h) {
     const { albumId } = request.params;
 
-    const likes = await this._albumsService.getTotalAlbumLikes(albumId);
+    const result = await this._albumsService.getTotalAlbumLikes(albumId);
 
-    return {
+    const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
-        likes,
+        likes: result.totalLikes,
       },
-    };
+    });
+
+    response.header('X-Data-Source', result.source);
+    return response;
   }
 }
 
