@@ -3,6 +3,7 @@ import Jwt from '@hapi/jwt';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import Inert from '@hapi/inert';
 import ClientError from './exceptions/ClientError.js';
 
 // Albums
@@ -73,6 +74,9 @@ const init = async () => {
   await server.register([
     {
       plugin: Jwt,
+    },
+    {
+      plugin: Inert,
     },
   ]);
 
