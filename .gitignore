@@ -4,3 +4,5 @@ notes-api-webserver.pem
 .prod.env
 .vscode/*
 !.vscode/launch.json
+src/api/albums/file/covers/*
+!src/api/albums/file/covers/.gitkeep
