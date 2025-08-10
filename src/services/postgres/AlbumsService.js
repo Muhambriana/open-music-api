@@ -5,6 +5,7 @@ import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
 import { generateNanoid } from '../../utils/helper.js';
 import { mapAlbumDBToModel } from '../../utils/index.js';
 import ClientError from '../../exceptions/ClientError.js';
+import CacheKeyEnum from '../../utils/config/CacheKeyEnum.js';
 
 class AlbumsService {
   constructor() {
@@ -121,7 +122,7 @@ class AlbumsService {
       throw new InvariantError(ExceptionTypeEnum.FAILED_ADD_ALBUM_LIKE.defaultMessage);
     }
 
-    await this._cacheService.delete(`albums-like:${albumId}`);
+    await this._cacheService.delete(CacheKeyEnum.ALBUM_LIKES.getFinalKey(albumId));
   }
 
   async isLikeAlbumExist(userRecId, albumRecId) {
@@ -157,36 +158,30 @@ class AlbumsService {
       throw new InvariantError(ExceptionTypeEnum.FAILED_DELETE_ALBUM_LIKE.defaultMessage);
     }
 
-    await this._cacheService.delete(`album-likes:${albumId}`);
+    await this._cacheService.delete(CacheKeyEnum.ALBUM_LIKES.getFinalKey(albumId));
   }
 
   async getTotalAlbumLikes(albumId) {
-    try {
-      const result = await this._cacheService.get(`album-likes:${albumId}`);
-      return {
-        source: 'cache',
-        totalLikes: JSON.parse(result),
-      };
-    } catch {
+    const cacheKey = CacheKeyEnum.ALBUM_LIKES.getFinalKey(albumId)
+
+    const fetchFromDb = async () => {
       const query = {
         text: `SELECT COUNT(ual.*)::int as likes
-      FROM user_album_likes ual
-      JOIN albums a ON a.rec_id = ual.album_id
-      WHERE a.public_id = $1
-      `,
+        FROM user_album_likes ual
+        JOIN albums a ON a.rec_id = ual.album_id
+        WHERE a.public_id = $1
+        `,
         values: [albumId],
       };
 
       const { rows } = await this._pool.query(query);
       const { likes } = rows[0];
 
-      await this._cacheService.set(`album-likes:${albumId}`, JSON.stringify(likes));
-
-      return {
-        source: 'database',
-        totalLikes: likes,
-      };
+      return likes
     }
+
+    const result = await this._cacheService.getOrSet(cacheKey, fetchFromDb)
+    return result;
   }
 }
 

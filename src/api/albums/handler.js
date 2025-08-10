@@ -133,7 +133,7 @@ class AlbumsHandler {
     const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
-        likes: result.totalLikes,
+        likes: result.data,
       },
     });
 

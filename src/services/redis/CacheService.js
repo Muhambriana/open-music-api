@@ -33,6 +33,25 @@ class CacheService {
   async delete(key) {
     return this._client.del(key);
   }
+
+  async getOrSet(key, fetchFunction, expirationInSecond = 1800) {
+    try {
+      const cached = await this.get(key);
+      return {
+        source: 'cache',
+        data: JSON.parse(cached),
+      };
+    } catch {
+      const data = await fetchFunction();
+
+      await this.set(key, JSON.stringify(data), expirationInSecond);
+
+      return {
+        source: 'database',
+        data,
+      };
+    }
+  }
 }
 
 export default CacheService;
