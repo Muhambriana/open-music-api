@@ -140,7 +140,7 @@ class AlbumsService {
         AND a.rec_id = ual.album_id
         AND u.public_id = $1 
         AND a.public_id = $2  
-      RETURNING uat.rec_id
+      RETURNING ual.rec_id
       `,
       values: [userId, albumId],
     };
@@ -148,7 +148,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError(ExceptionTypeEnum.FAILED_ADD_ALBUM_LIKE.defaultMessage);
+      throw new InvariantError(ExceptionTypeEnum.FAILED_DELETE_ALBUM_LIKE.defaultMessage);
     }
   }
 
