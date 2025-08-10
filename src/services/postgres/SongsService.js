@@ -52,7 +52,7 @@ class SongsService {
   }
 
   async getSongs(title = '', performer = '') {
-    const isShouldUseCache = title.isBlankString && performer.isBlankString;
+    const isShouldUseCache = isBlankString(title) && isBlankString(performer);
     const fetchFromDb = async () => {
       const query = {
         text: 'SELECT public_id as id, title, performer FROM songs WHERE title ILIKE $1 and performer ILIKE $2',
