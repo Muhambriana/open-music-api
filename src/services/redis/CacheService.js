@@ -35,22 +35,21 @@ class CacheService {
   }
 
   async getOrSet(key, fetchFunction, expirationInSecond = 1800) {
-    try {
-      const cached = await this.get(key);
+    const cached = await this.get(key).catch(() => null);
+
+    if (cached != null) {
       return {
         source: 'cache',
         data: JSON.parse(cached),
       };
-    } catch {
-      const data = await fetchFunction();
-
-      await this.set(key, JSON.stringify(data), expirationInSecond);
-
-      return {
-        source: 'database',
-        data,
-      };
     }
+
+    const data = await fetchFunction();
+    await this.set(key, JSON.stringify(data), expirationInSecond);
+    return {
+      source: 'db',
+      data,
+    };
   }
 }
 
