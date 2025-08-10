@@ -2,10 +2,17 @@ import autoBind from 'auto-bind';
 import SuccessTypeEnum from '../../utils/config/SuccessTypeEnum.js';
 
 class AlbumsHandler {
-  constructor(albumsService, songsService, storageService, validator) {
+  constructor(
+    albumsService,
+    songsService,
+    storageService,
+    usersService,
+    validator,
+  ) {
     this._albumsService = albumsService;
     this._songsService = songsService;
     this._storageService = storageService;
+    this._usersService = usersService;
     this._validator = validator;
 
     autoBind(this);
@@ -86,6 +93,49 @@ class AlbumsHandler {
 
     response.code(201);
     return response;
+  }
+
+  async postAlbumLikeHandler(request, h) {
+    const { id: credentialId } = request.auth.credentials;
+    const { albumId } = request.params;
+
+    const userRecId = await this._usersService.getUserRecordId(credentialId);
+    const albumRecId = await this._albumsService.getAlbumRecordId(albumId);
+
+    await this._albumsService.addAlbumLike(userRecId, albumRecId);
+
+    const response = h.response({
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: 'Success like an album',
+    });
+
+    response.code(201);
+    return response;
+  }
+
+  async deleteAlbumLikeHandler(request) {
+    const { id: credentialId } = request.auth.credentials;
+    const { albumId } = request.params;
+
+    await this._albumsService.deleteAlbumLike(credentialId, albumId);
+
+    return {
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      message: 'Success unlike an album',
+    };
+  }
+
+  async getTotalAlbumLikesHandler(request) {
+    const { albumId } = request.params;
+
+    const likes = await this._albumsService.getTotalAlbumLikes(albumId);
+
+    return {
+      status: SuccessTypeEnum.SUCCESS.defaultMessage,
+      data: {
+        likes,
+      },
+    };
   }
 }
 

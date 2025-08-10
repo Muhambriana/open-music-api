@@ -8,9 +8,16 @@ const albumsPlugin = {
     albumsService,
     songsService,
     storageService,
+    usersService,
     validator,
   }) => {
-    const albumsHandler = new AlbumsHandler(albumsService, songsService, storageService, validator);
+    const albumsHandler = new AlbumsHandler(
+      albumsService,
+      songsService,
+      storageService,
+      usersService,
+      validator,
+    );
     server.route(routes(albumsHandler));
   },
 };

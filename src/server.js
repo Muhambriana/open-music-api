@@ -103,6 +103,7 @@ const init = async () => {
         albumsService,
         songsService,
         storageService,
+        usersService,
         validator: AlbumsValidator,
       },
     },

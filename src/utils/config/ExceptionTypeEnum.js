@@ -38,6 +38,10 @@ class ExceptionTypeEnum {
   static ACTIVITY_FAILED_TO_CREATE = new ExceptionTypeEnum(613, 'activity_failed_to_create', 'Activity failed to create');
 
   static FAILED_UPDATE_ALBUM_COVER = new ExceptionTypeEnum(614, 'failed_update_album_cover', 'Failed update album cover');
+
+  static FAILED_ADD_ALBUM_LIKE = new ExceptionTypeEnum(615, 'failed_add_album_like', 'Failed add like');
+
+  static FAILED_DELETE_ALBUM_LIKE = new ExceptionTypeEnum(615, 'failed_delete_album_like', 'Failed delete like');
 }
 
 Object.freeze(ExceptionTypeEnum); // Prevent further modification

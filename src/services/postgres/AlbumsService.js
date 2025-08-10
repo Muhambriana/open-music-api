@@ -101,6 +101,55 @@ class AlbumsService {
       console.log(error);
     }
   }
+
+  async addAlbumLike(userRecId, albumRecId) {
+    const query = {
+      text: 'INSERT INTO user_album_likes (user_id, album_id) VALUES ($1, $2) RETURNING rec_id',
+      values: [userRecId, albumRecId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError(ExceptionTypeEnum.FAILED_ADD_ALBUM_LIKE.defaultMessage);
+    }
+  }
+
+  async deleteALbumLike(userId, albumId) {
+    const query = {
+      text: `DELETE
+      FROM user_album_likes ual
+      USING users u, albums a
+      WHERE u.rec_id = ual.user_id
+        AND a.rec_id = ual.album_id
+        AND u.public_id = $1 
+        AND a.public_id = $2  
+      RETURNING uat.rec_id
+      `,
+      values: [userId, albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError(ExceptionTypeEnum.FAILED_ADD_ALBUM_LIKE.defaultMessage);
+    }
+  }
+
+  async getTotalAlbumLikes(albumId) {
+    const query = {
+      text: `SELECT COUNT(ual.*) as total
+      FROM user_album_likes ual
+      JOIN albums a ON a.rec_id = ual.album_id
+      WHERE a.public_id = $1
+      `,
+      values: [albumId],
+    };
+
+    const { rows } = await this._pool.query(query);
+
+    return rows[0].total;
+  }
 }
 
 export default AlbumsService;
