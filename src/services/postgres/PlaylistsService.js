@@ -160,7 +160,7 @@ class PlaylistsService {
       const { rows } = await this._pool.query(query);
 
       return rows;
-    }
+    };
 
     const result = await this._cacheService.getOrSet(cacheKey, fetchFromDb);
     return result;
@@ -207,9 +207,9 @@ class PlaylistsService {
   }
 
   async addActivity(
-    playlistRecId, 
-    songRecId, 
-    userRecId, 
+    playlistRecId,
+    songRecId,
+    userRecId,
     action,
     playlistId,
   ) {
@@ -238,30 +238,30 @@ class PlaylistsService {
   async getPlaylistSongActivites(playlistId) {
     const cacheKey = CacheKeyEnum.PLAYLIST_ACTIVITIES.getFinalKey(playlistId);
 
-    const fetchFromDb = async ()  => {
+    const fetchFromDb = async () => {
       const query = {
-      text: `SELECT u.username, s.title, psa.action, psa.time
-      FROM playlist_song_activities psa
-      JOIN playlists p ON p.rec_id = psa.playlist_id
-      JOIN songs s ON s.rec_id = psa.song_id
-      JOIN users u ON u.rec_id = psa.user_id
-      WHERE p.public_id = $1
-      ORDER BY psa.rec_id
-      `,
-      values: [playlistId],
+        text: `SELECT u.username, s.title, psa.action, psa.time
+        FROM playlist_song_activities psa
+        JOIN playlists p ON p.rec_id = psa.playlist_id
+        JOIN songs s ON s.rec_id = psa.song_id
+        JOIN users u ON u.rec_id = psa.user_id
+        WHERE p.public_id = $1
+        ORDER BY psa.rec_id
+        `,
+        values: [playlistId],
+      };
+
+      const { rows, rowCount } = await this._pool.query(query);
+
+      if (!rowCount) {
+        throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
+      }
+
+      return rows;
     };
 
-    const { rows, rowCount } = await this._pool.query(query);
-
-    if (!rowCount) {
-      throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
-    }
-
-    return rows;
-    }
-
     const result = await this._cacheService.getOrSet(cacheKey, fetchFromDb);
-    return result
+    return result;
   }
 }
 
