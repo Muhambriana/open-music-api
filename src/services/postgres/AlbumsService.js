@@ -11,6 +11,10 @@ class AlbumsService {
     this._pool = new Pool();
   }
 
+  setCacheService(cacheService) {
+    this._cacheService = cacheService;
+  }
+
   async addAlbum({ name, year }) {
     const albumId = generateNanoid('album');
 

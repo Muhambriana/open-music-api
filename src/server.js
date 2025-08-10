@@ -45,6 +45,9 @@ import ProducerService from './services/rabbitmq/ProducerService.js';
 // Storage Service
 import StorageService from './services/storage/StorageService.js';
 
+// Cache Service
+import CacheService from './services/redis/CacheService.js';
+
 dotenv.config();
 
 const init = async () => {
@@ -54,10 +57,12 @@ const init = async () => {
   const authenticationsService = new AuthenticationsService();
   const playlistsService = new PlaylistsService();
   const collaborationsService = new CollaborationsService();
+  const cacheService = new CacheService();
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const storageService = new StorageService(path.resolve(__dirname, 'api/albums/file/covers'));
 
+  albumsService.setCacheService(cacheService);
   playlistsService.setCollaborationsService(collaborationsService);
   playlistsService.setUsersService(usersService);
 
