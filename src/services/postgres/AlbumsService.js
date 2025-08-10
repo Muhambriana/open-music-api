@@ -107,7 +107,7 @@ class AlbumsService {
     }
   }
 
-  async addAlbumLike(userRecId, albumRecId) {
+  async addAlbumLike(userRecId, albumRecId, albumId) {
     await this.isLikeAlbumExist(userRecId, albumRecId);
 
     const query = {
@@ -120,6 +120,8 @@ class AlbumsService {
     if (!result.rowCount) {
       throw new InvariantError(ExceptionTypeEnum.FAILED_ADD_ALBUM_LIKE.defaultMessage);
     }
+
+    await this._cacheService.delete(`albums-like:${albumId}`);
   }
 
   async isLikeAlbumExist(userRecId, albumRecId) {
@@ -154,6 +156,8 @@ class AlbumsService {
     if (!result.rowCount) {
       throw new InvariantError(ExceptionTypeEnum.FAILED_DELETE_ALBUM_LIKE.defaultMessage);
     }
+
+    await this._cacheService.delete(`album-likes:${albumId}`);
   }
 
   async getTotalAlbumLikes(albumId) {

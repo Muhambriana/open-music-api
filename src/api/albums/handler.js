@@ -102,7 +102,7 @@ class AlbumsHandler {
     const userRecId = await this._usersService.getUserRecordId(credentialId);
     const albumRecId = await this._albumsService.getAlbumRecordId(albumId);
 
-    await this._albumsService.addAlbumLike(userRecId, albumRecId);
+    await this._albumsService.addAlbumLike(userRecId, albumRecId, albumId);
 
     const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
