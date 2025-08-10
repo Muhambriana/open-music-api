@@ -4,6 +4,7 @@ import InvariantError from '../../exceptions/InvariantError.js';
 import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 import AuthorizationError from '../../exceptions/AuthorizationError.js';
+import CacheKeyEnum from '../../utils/config/CacheKeyEnum.js';
 
 class PlaylistsService {
   constructor() {
@@ -16,6 +17,10 @@ class PlaylistsService {
 
   setUsersService(usersService) {
     this._usersService = usersService;
+  }
+
+  setCacheService(cacheService) {
+    this._cacheService = cacheService;
   }
 
   async addPlaylist({ name, owner }) {
@@ -100,6 +105,7 @@ class PlaylistsService {
       throw new InvariantError(ExceptionTypeEnum.FAILED_ADD_SONG_INTO_PLAYLIST.defaultMessage);
     }
 
+    await this._cacheService.delete(CacheKeyEnum.PLAYLIST_SONGS.getFinalKey(playlistId));
     return result.rows.rec_id;
   }
 
@@ -138,19 +144,26 @@ class PlaylistsService {
   }
 
   async getPlaylistSongs(playlistId) {
-    const query = {
-      text: `SELECT s.public_id as id, s.title, s.performer
-      FROM songs s
-      JOIN playlist_songs ps ON ps.song_id = s.rec_id
-      JOIN playlists p ON p.rec_id = ps.playlist_id
-      WHERE p.public_id = $1
-      `,
-      values: [playlistId],
-    };
+    const cacheKey = CacheKeyEnum.PLAYLIST_SONGS.getFinalKey(playlistId);
 
-    const result = await this._pool.query(query);
+    const fetchFromDb = async () => {
+      const query = {
+        text: `SELECT s.public_id as id, s.title, s.performer
+        FROM songs s
+        JOIN playlist_songs ps ON ps.song_id = s.rec_id
+        JOIN playlists p ON p.rec_id = ps.playlist_id
+        WHERE p.public_id = $1
+        `,
+        values: [playlistId],
+      };
 
-    return result.rows;
+      const { rows } = await this._pool.query(query);
+
+      return rows;
+    }
+
+    const result = await this._cacheService.getOrSet(cacheKey, fetchFromDb);
+    return result;
   }
 
   async deletePlaylistSongById(playlistId, songId) {
@@ -173,6 +186,7 @@ class PlaylistsService {
       throw new NotFoundError('Song Or Playlis is not exist');
     }
 
+    await this._cacheService.delete(CacheKeyEnum.PLAYLIST_SONGS.getFinalKey(playlistId));
     return result.rows[0];
   }
 
@@ -192,7 +206,13 @@ class PlaylistsService {
     }
   }
 
-  async addActivity(playlistRecId, songRecId, userRecId, action) {
+  async addActivity(
+    playlistRecId, 
+    songRecId, 
+    userRecId, 
+    action,
+    playlistId,
+  ) {
     const currentDateTime = getDateTimeNow();
 
     const query = {
@@ -211,10 +231,15 @@ class PlaylistsService {
     if (!result.rowCount) {
       throw new InvariantError(ExceptionTypeEnum.ACTIVITY_FAILED_TO_CREATE.defaultMessage);
     }
+
+    await this._cacheService.delete(CacheKeyEnum.PLAYLIST_ACTIVITIES.getFinalKey(playlistId));
   }
 
   async getPlaylistSongActivites(playlistId) {
-    const query = {
+    const cacheKey = CacheKeyEnum.PLAYLIST_ACTIVITIES.getFinalKey(playlistId);
+
+    const fetchFromDb = async ()  => {
+      const query = {
       text: `SELECT u.username, s.title, psa.action, psa.time
       FROM playlist_song_activities psa
       JOIN playlists p ON p.rec_id = psa.playlist_id
@@ -226,13 +251,17 @@ class PlaylistsService {
       values: [playlistId],
     };
 
-    const result = await this._pool.query(query);
+    const { rows, rowCount } = await this._pool.query(query);
 
-    if (!result.rowCount) {
+    if (!rowCount) {
       throw new NotFoundError(ExceptionTypeEnum.PLAYLIST_NOT_EXIST.defaultMessage);
     }
 
-    return result.rows;
+    return rows;
+    }
+
+    const result = await this._cacheService.getOrSet(cacheKey, fetchFromDb);
+    return result
   }
 }
 

@@ -82,24 +82,27 @@ class PlaylistsHandler {
     return response;
   }
 
-  async getPlaylistSongsHandler(request) {
+  async getPlaylistSongsHandler(request, h) {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId } = request.params;
 
     await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
 
     const playlist = await this._playlistsService.getPlaylistById(playlistId);
-    const songs = await this._playlistsService.getPlaylistSongs(playlistId);
+    const result = await this._playlistsService.getPlaylistSongs(playlistId);
 
-    return {
+    const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
         playlist: {
           ...playlist,
-          songs,
+          songs: result.data,
         },
       },
-    };
+    });
+
+    response.header('X-Data-Source', result.source);
+    return response;
   }
 
   async deletePlaylistSongByIdHandler(request) {
@@ -128,20 +131,23 @@ class PlaylistsHandler {
     };
   }
 
-  async getPlaylistSongActivitesHandler(request) {
+  async getPlaylistSongActivitesHandler(request, h) {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId } = request.params;
 
     await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
-    const activities = await this._playlistsService.getPlaylistSongActivites(playlistId);
+    const result = await this._playlistsService.getPlaylistSongActivites(playlistId);
 
-    return {
+    const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
         playlistId,
-        activities,
+        activities: result.data,
       },
-    };
+    });
+
+    response.header('X-Data-Source', result.source);
+    return response;
   }
 }
 

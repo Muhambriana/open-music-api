@@ -65,6 +65,7 @@ const init = async () => {
   albumsService.setCacheService(cacheService);
   playlistsService.setCollaborationsService(collaborationsService);
   playlistsService.setUsersService(usersService);
+  playlistsService.setCacheService(cacheService);
 
   const server = Hapi.server({
     port: process.env.PORT,
