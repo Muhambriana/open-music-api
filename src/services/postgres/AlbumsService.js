@@ -162,7 +162,7 @@ class AlbumsService {
   }
 
   async getTotalAlbumLikes(albumId) {
-    const cacheKey = CacheKeyEnum.ALBUM_LIKES.getFinalKey(albumId)
+    const cacheKey = CacheKeyEnum.ALBUM_LIKES.getFinalKey(albumId);
 
     const fetchFromDb = async () => {
       const query = {
