@@ -177,10 +177,10 @@ class AlbumsService {
       const { rows } = await this._pool.query(query);
       const { likes } = rows[0];
 
-      return likes
-    }
+      return likes;
+    };
 
-    const result = await this._cacheService.getOrSet(cacheKey, fetchFromDb)
+    const result = await this._cacheService.getOrSet(cacheKey, fetchFromDb);
     return result;
   }
 }
