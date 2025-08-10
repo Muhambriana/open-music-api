@@ -1,5 +1,7 @@
 import { nanoid } from 'nanoid';
 
+const isBlankString = (str) => str.trim() === '';
+
 /**
  * Get real DateTime (Reusable)
  * @returns DateTime as string
@@ -18,4 +20,5 @@ function generateNanoid(prefix) {
 export {
   getDateTimeNow,
   generateNanoid,
+  isBlankString,
 };

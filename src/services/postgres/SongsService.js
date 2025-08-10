@@ -1,13 +1,18 @@
 import { Pool } from 'pg';
-import { generateNanoid } from '../../utils/helper.js';
+import { generateNanoid, isBlankString } from '../../utils/helper.js';
 import InvariantError from '../../exceptions/InvariantError.js';
 import { mapSongDBToModel } from '../../utils/index.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 import ExceptionTypeEnum from '../../utils/config/ExceptionTypeEnum.js';
+import CacheKeyEnum from '../../utils/config/CacheKeyEnum.js';
 
 class SongsService {
   constructor() {
     this._pool = new Pool();
+  }
+
+  setCacheService(cacheService) {
+    this._cacheService = cacheService;
   }
 
   async addSong({
@@ -41,16 +46,34 @@ class SongsService {
       throw new InvariantError(ExceptionTypeEnum.SONG_FAILED_TO_CREATE.defaultMessage);
     }
 
+    await this._cacheService.delete(CacheKeyEnum.SONGS.key);
+
     return resultSongId;
   }
 
   async getSongs(title = '', performer = '') {
-    const query = {
-      text: 'SELECT public_id as id, title, performer FROM songs WHERE title ILIKE $1 and performer ILIKE $2',
-      values: [`%${title}%`, `%${performer}%`],
+    const isShouldUseCache = title.isBlankString && performer.isBlankString;
+    const fetchFromDb = async () => {
+      const query = {
+        text: 'SELECT public_id as id, title, performer FROM songs WHERE title ILIKE $1 and performer ILIKE $2',
+        values: [`%${title}%`, `%${performer}%`],
+      };
+      const { rows } = await this._pool.query(query);
+      return rows;
     };
-    const { rows } = await this._pool.query(query);
-    return rows;
+
+    if (isShouldUseCache) {
+      const cacheKey = CacheKeyEnum.SONGS.key;
+      const result = this._cacheService.getOrSet(cacheKey, fetchFromDb);
+      return result;
+    }
+
+    const result = await fetchFromDb();
+
+    return {
+      source: 'db',
+      data: result,
+    };
   }
 
   async getSongById(songId) {
@@ -95,6 +118,8 @@ class SongsService {
     if (!result.rows.length) {
       throw new NotFoundError(ExceptionTypeEnum.SONG_NOT_EXIST.defaultMessage);
     }
+
+    await this._cacheService.delete(CacheKeyEnum.SONGS.key);
   }
 
   async deleteSongById(songId) {
@@ -108,6 +133,8 @@ class SongsService {
     if (!result.rows.length) {
       throw new NotFoundError(ExceptionTypeEnum.SONG_NOT_EXIST.defaultMessage);
     }
+
+    await this._cacheService.delete(CacheKeyEnum.SONGS.key);
   }
 
   async getSongsByAlbumId(albumId) {

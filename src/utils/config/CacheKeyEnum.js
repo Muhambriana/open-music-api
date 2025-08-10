@@ -12,6 +12,8 @@ class CacheKeyEnum {
   static PLAYLIST_SONGS = new CacheKeyEnum('playlists-songs:{additionalKey}');
 
   static PLAYLIST_ACTIVITIES = new CacheKeyEnum('playlists-activities:{additionalKey}');
+
+  static SONGS = new CacheKeyEnum('songs');
 }
 
 Object.freeze(CacheKeyEnum); // Prevent further modification

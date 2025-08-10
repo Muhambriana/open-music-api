@@ -31,19 +31,22 @@ class SongsHandler {
     return response;
   }
 
-  async getSongsHandler(request) {
+  async getSongsHandler(request, h) {
     const { title = '', performer = '' } = request.query;
 
     await this._validator.validateSongQuery({ title, performer });
 
-    const songs = await this._songsService.getSongs(title, performer);
+    const result = await this._songsService.getSongs(title, performer);
 
-    return {
+    const response = h.response({
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
-        songs,
+        songs: result.data,
       },
-    };
+    });
+
+    response.header('X-Data-Source', result.source);
+    return response;
   }
 
   async getSongByIdHandler(request) {

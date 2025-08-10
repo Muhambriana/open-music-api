@@ -63,9 +63,12 @@ const init = async () => {
   const storageService = new StorageService(path.resolve(__dirname, 'api/albums/file/covers'));
 
   albumsService.setCacheService(cacheService);
+
   playlistsService.setCollaborationsService(collaborationsService);
   playlistsService.setUsersService(usersService);
   playlistsService.setCacheService(cacheService);
+
+  songsService.setCacheService(cacheService);
 
   const server = Hapi.server({
     port: process.env.PORT,
