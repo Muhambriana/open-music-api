@@ -9,8 +9,6 @@ class CacheKeyEnum {
 
   static ALBUM_LIKES = new CacheKeyEnum('album-likes:{additionalKey}');
 
-  static PLAYLIST_SONGS = new CacheKeyEnum('playlists-songs:{additionalKey}');
-
   static PLAYLIST_ACTIVITIES = new CacheKeyEnum('playlists-activities:{additionalKey}');
 
   static SONGS = new CacheKeyEnum('songs');

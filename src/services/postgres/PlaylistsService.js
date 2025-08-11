@@ -105,7 +105,6 @@ class PlaylistsService {
       throw new InvariantError(ExceptionTypeEnum.FAILED_ADD_SONG_INTO_PLAYLIST.defaultMessage);
     }
 
-    await this._cacheService.delete(CacheKeyEnum.PLAYLIST_SONGS.getFinalKey(playlistId));
     return result.rows.rec_id;
   }
 
@@ -144,26 +143,19 @@ class PlaylistsService {
   }
 
   async getPlaylistSongs(playlistId) {
-    const cacheKey = CacheKeyEnum.PLAYLIST_SONGS.getFinalKey(playlistId);
-
-    const fetchFromDb = async () => {
-      const query = {
-        text: `SELECT s.public_id as id, s.title, s.performer
+    const query = {
+      text: `SELECT s.public_id as id, s.title, s.performer
         FROM songs s
         JOIN playlist_songs ps ON ps.song_id = s.rec_id
         JOIN playlists p ON p.rec_id = ps.playlist_id
         WHERE p.public_id = $1
         `,
-        values: [playlistId],
-      };
-
-      const { rows } = await this._pool.query(query);
-
-      return rows;
+      values: [playlistId],
     };
 
-    const result = await this._cacheService.getOrSet(cacheKey, fetchFromDb);
-    return result;
+    const { rows } = await this._pool.query(query);
+
+    return rows;
   }
 
   async deletePlaylistSongById(playlistId, songId) {
@@ -186,7 +178,6 @@ class PlaylistsService {
       throw new NotFoundError('Song Or Playlis is not exist');
     }
 
-    await this._cacheService.delete(CacheKeyEnum.PLAYLIST_SONGS.getFinalKey(playlistId));
     return result.rows[0];
   }
 

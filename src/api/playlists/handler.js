@@ -82,27 +82,24 @@ class PlaylistsHandler {
     return response;
   }
 
-  async getPlaylistSongsHandler(request, h) {
+  async getPlaylistSongsHandler(request) {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId } = request.params;
 
     await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
 
     const playlist = await this._playlistsService.getPlaylistById(playlistId);
-    const result = await this._playlistsService.getPlaylistSongs(playlistId);
+    const songs = await this._playlistsService.getPlaylistSongs(playlistId);
 
-    const response = h.response({
+    return {
       status: SuccessTypeEnum.SUCCESS.defaultMessage,
       data: {
         playlist: {
           ...playlist,
-          songs: result.data,
+          songs,
         },
       },
-    });
-
-    response.header('X-Data-Source', result.source);
-    return response;
+    };
   }
 
   async deletePlaylistSongByIdHandler(request) {
